@@ -14,15 +14,14 @@
       --muted: #51606f;
       --border: #e8edf3;
 
-      --choice-a: #2ecc71;
-      --choice-b: #f5a623;
-      --choice-c: #ef4444;
-      --neutral: #cbd5e1;
+      --choice-a: #2ecc71;   /* Empty    – green        */
+      --choice-b: #a8d94a;   /* Moderate – yellow-green */
+      --choice-c: #f5a623;   /* Limited  – orange       */
+      --choice-d: #ef4444;   /* Full     – red          */
+      --neutral:  #cbd5e1;   /* Unknown  – grey         */
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -38,45 +37,25 @@
       position: relative;
     }
 
-    .header {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
+    .header { display: flex; align-items: center; gap: 20px; }
 
     .logo {
-      width: 56px;
-      height: 56px;
+      width: 56px; height: 56px;
       border-radius: 6px;
       background: var(--navy);
       color: white;
-      display: grid;
-      place-items: center;
-      font-weight: 700;
-      letter-spacing: 0.5px;
+      display: grid; place-items: center;
+      font-weight: 700; letter-spacing: 0.5px;
       box-shadow: 0 8px 15px rgba(0, 59, 115, 0.22);
     }
 
-    .title {
-      margin: 0;
-      color: var(--navy);
-      font-size: 28px;
-      line-height: 1;
-      font-weight: 800;
-    }
-
-    .subtitle {
-      margin: 8px 0 0;
-      color: var(--muted);
-      font-size: 15px;
-    }
+    .title { margin: 0; color: var(--navy); font-size: 28px; line-height: 1; font-weight: 800; }
+    .subtitle { margin: 8px 0 0; color: var(--muted); font-size: 15px; }
 
     .levels {
       width: min(565px, calc(100vw - 48px));
       margin: 67px auto 0;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
+      display: flex; flex-direction: column; gap: 14px;
     }
 
     .card {
@@ -85,169 +64,79 @@
       background: var(--card-bg);
       border: 1px solid var(--border);
       box-shadow: 0 18px 35px rgba(15, 23, 42, 0.08);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-      padding: 0 37px 0 70px;
-      position: relative;
-      overflow: hidden;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 24px; padding: 0 37px 0 70px;
+      position: relative; overflow: hidden;
       transition: 0.25s ease;
     }
 
     .card::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 14px;
-      height: 100%;
-      background: var(--neutral);
-      transition: 0.25s ease;
+      content: ""; position: absolute; left: 0; top: 0;
+      width: 14px; height: 100%;
+      background: var(--neutral); transition: 0.25s ease;
     }
 
-    .card:has(select option[value="choice-a"]:checked)::before {
-      background: var(--choice-a);
-    }
+    .card:has(select option[value="choice-a"]:checked)::before { background: var(--choice-a); }
+    .card:has(select option[value="choice-b"]:checked)::before { background: var(--choice-b); }
+    .card:has(select option[value="choice-c"]:checked)::before { background: var(--choice-c); }
+    .card:has(select option[value="choice-d"]:checked)::before { background: var(--choice-d); }
 
-    .card:has(select option[value="choice-b"]:checked)::before {
-      background: var(--choice-b);
-    }
+    .card:has(select option[value="choice-a"]:checked) { box-shadow: 0 18px 35px rgba(46, 204, 113, 0.16); }
+    .card:has(select option[value="choice-b"]:checked) { box-shadow: 0 18px 35px rgba(168, 217, 74, 0.20); }
+    .card:has(select option[value="choice-c"]:checked) { box-shadow: 0 18px 35px rgba(245, 166, 35, 0.18); }
+    .card:has(select option[value="choice-d"]:checked) { box-shadow: 0 18px 35px rgba(239, 68, 68, 0.18); }
 
-    .card:has(select option[value="choice-c"]:checked)::before {
-      background: var(--choice-c);
-    }
-
-    .card:has(select option[value="choice-a"]:checked) {
-      box-shadow: 0 18px 35px rgba(46, 204, 113, 0.16);
-    }
-
-    .card:has(select option[value="choice-b"]:checked) {
-      box-shadow: 0 18px 35px rgba(245, 166, 35, 0.18);
-    }
-
-    .card:has(select option[value="choice-c"]:checked) {
-      box-shadow: 0 18px 35px rgba(239, 68, 68, 0.18);
-    }
-
-    .card-title {
-      font-size: 16px;
-      color: #9aa5b1;
-      letter-spacing: 0.2px;
-      white-space: nowrap;
-    }
+    .card-title { font-size: 16px; color: #9aa5b1; letter-spacing: 0.2px; white-space: nowrap; }
 
     .level-select {
-      min-width: 145px;
-      border: 1px solid #b9b9b9;
-      border-radius: 6px;
+      min-width: 220px;
+      border: 1px solid #b9b9b9; border-radius: 6px;
       background: linear-gradient(#f4f4f4, #dcdcdc);
-      color: #202124;
-      font-size: 14px;
-      font-weight: 700;
-      padding: 8px 10px;
-      cursor: pointer;
+      color: #202124; font-size: 14px; font-weight: 700;
+      padding: 8px 10px; cursor: pointer;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.18);
     }
 
-    .level-select:hover {
-      background: linear-gradient(#ffffff, #e8e8e8);
-    }
+    .level-select:hover { background: linear-gradient(#ffffff, #e8e8e8); }
 
-    option[value="choice-a"] {
-      color: #168a45;
-      font-weight: bold;
-    }
+    .level-select.sel-a { color: #1a7a40; }
+    .level-select.sel-b { color: #5a7a00; }
+    .level-select.sel-c { color: #b87900; }
+    .level-select.sel-d { color: #c62828; }
 
-    option[value="choice-b"] {
-      color: #b87900;
-      font-weight: bold;
-    }
-
-    option[value="choice-c"] {
-      color: #c62828;
-      font-weight: bold;
-    }
+    option[value="choice-a"] { color: #1a7a40; font-weight: bold; }
+    option[value="choice-b"] { color: #5a7a00; font-weight: bold; }
+    option[value="choice-c"] { color: #b87900; font-weight: bold; }
+    option[value="choice-d"] { color: #c62828; font-weight: bold; }
 
     .legend {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      margin-top: 35px;
+      display: flex; justify-content: center; flex-wrap: wrap;
+      gap: 10px; margin-top: 35px;
     }
 
     .legend-item {
-      background: #ffffff;
-      border-radius: 6px;
-      padding: 8px 11px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: #334155;
-      font-size: 14px;
+      background: #ffffff; border-radius: 6px; padding: 8px 11px;
+      display: flex; align-items: center; gap: 8px;
+      color: #334155; font-size: 13px;
       box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
     }
 
-    .dot {
-      width: 15px;
-      height: 15px;
-      border-radius: 4px;
-      display: inline-block;
-    }
+    .dot { width: 15px; height: 15px; border-radius: 4px; display: inline-block; flex-shrink: 0; }
+    .dot.choice-a { background: var(--choice-a); }
+    .dot.choice-b { background: var(--choice-b); }
+    .dot.choice-c { background: var(--choice-c); }
+    .dot.choice-d { background: var(--choice-d); }
+    .dot.unknown  { background: var(--neutral);  }
 
-    .dot.choice-a {
-      background: var(--choice-a);
-    }
-
-    .dot.choice-b {
-      background: var(--choice-b);
-    }
-
-    .dot.choice-c {
-      background: var(--choice-c);
-    }
-
-    .disclaimer {
-      position: absolute;
-      left: 44px;
-      bottom: 38px;
-      color: #536476;
-      font-size: 13px;
-    }
+    .disclaimer { position: absolute; left: 44px; bottom: 38px; color: #536476; font-size: 13px; }
 
     @media (max-width: 680px) {
-      .page {
-        padding: 28px 20px;
-      }
-
-      .header {
-        align-items: flex-start;
-      }
-
-      .levels {
-        margin-top: 50px;
-      }
-
-      .card {
-        padding: 24px;
-        border-radius: 24px;
-        flex-direction: column;
-        gap: 18px;
-        text-align: center;
-      }
-
-      .card-title {
-        white-space: normal;
-      }
-
-      .legend {
-        flex-wrap: wrap;
-      }
-
-      .disclaimer {
-        position: static;
-        margin-top: 35px;
-      }
+      .page { padding: 28px 20px; }
+      .header { align-items: flex-start; }
+      .levels { margin-top: 50px; }
+      .card { padding: 24px; border-radius: 24px; flex-direction: column; gap: 18px; text-align: center; }
+      .card-title { white-space: normal; }
+      .disclaimer { position: static; margin-top: 35px; }
     }
   </style>
 </head>
@@ -256,7 +145,6 @@
   <main class="page">
     <header class="header">
       <div class="logo">KC</div>
-
       <div>
         <h1 class="title">Kate's Corner</h1>
         <p class="subtitle">A quick peek at how busy Kate is</p>
@@ -264,65 +152,81 @@
     </header>
 
     <section class="levels">
+
       <div class="card">
-        <span class="card-title">Level 0 - Collaborative Study Space</span>
-        <select class="level-select">
-          <option value="">Choose one...</option>
-          <option value="choice-a">Option A</option>
-          <option value="choice-b">Option B</option>
-          <option value="choice-c">Option C</option>
+        <span class="card-title">Level 0 – Collaborative Study Space</span>
+        <select class="level-select" aria-label="Level 0 availability">
+          <option value="">How busy is it?</option>
+          <option value="choice-a">Empty – Very easy to find seats</option>
+          <option value="choice-b">Moderate – Quite easy to find seats</option>
+          <option value="choice-c">Limited – Might be difficult to find seats</option>
+          <option value="choice-d">Full – Basically no seats left</option>
         </select>
       </div>
 
       <div class="card">
-        <span class="card-title">Level 2 - Collaborative Study Space</span>
-        <select class="level-select">
-          <option value="">Choose one...</option>
-          <option value="choice-a">Option A</option>
-          <option value="choice-b">Option B</option>
-          <option value="choice-c">Option C</option>
+        <span class="card-title">Level 2 – Collaborative Study Space</span>
+        <select class="level-select" aria-label="Level 2 availability">
+          <option value="">How busy is it?</option>
+          <option value="choice-a">Empty – Very easy to find seats</option>
+          <option value="choice-b">Moderate – Quite easy to find seats</option>
+          <option value="choice-c">Limited – Might be difficult to find seats</option>
+          <option value="choice-d">Full – Basically no seats left</option>
         </select>
       </div>
 
       <div class="card">
-        <span class="card-title">Level 3 - Quiet Study Space</span>
-        <select class="level-select">
-          <option value="">Choose one...</option>
-          <option value="choice-a">Option A</option>
-          <option value="choice-b">Option B</option>
-          <option value="choice-c">Option C</option>
+        <span class="card-title">Level 3 – Quiet Study Space</span>
+        <select class="level-select" aria-label="Level 3 availability">
+          <option value="">How busy is it?</option>
+          <option value="choice-a">Empty – Very easy to find seats</option>
+          <option value="choice-b">Moderate – Quite easy to find seats</option>
+          <option value="choice-c">Limited – Might be difficult to find seats</option>
+          <option value="choice-d">Full – Basically no seats left</option>
         </select>
       </div>
 
       <div class="card">
-        <span class="card-title">Level 4 - Silent Study Space</span>
-        <select class="level-select">
-          <option value="">Choose one...</option>
-          <option value="choice-a">Option A</option>
-          <option value="choice-b">Option B</option>
-          <option value="choice-c">Option C</option>
+        <span class="card-title">Level 4 – Silent Study Space</span>
+        <select class="level-select" aria-label="Level 4 availability">
+          <option value="">How busy is it?</option>
+          <option value="choice-a">Empty – Very easy to find seats</option>
+          <option value="choice-b">Moderate – Quite easy to find seats</option>
+          <option value="choice-c">Limited – Might be difficult to find seats</option>
+          <option value="choice-d">Full – Basically no seats left</option>
         </select>
       </div>
+
     </section>
 
     <div class="legend">
-      <div class="legend-item">
-        <span class="dot choice-a"></span>
-        Option A
-      </div>
-
-      <div class="legend-item">
-        <span class="dot choice-b"></span>
-        Option B
-      </div>
-
-      <div class="legend-item">
-        <span class="dot choice-c"></span>
-        Option C
-      </div>
+      <div class="legend-item"><span class="dot choice-a"></span>Empty</div>
+      <div class="legend-item"><span class="dot choice-b"></span>Moderate</div>
+      <div class="legend-item"><span class="dot choice-c"></span>Limited</div>
+      <div class="legend-item"><span class="dot choice-d"></span>Full</div>
+      <div class="legend-item"><span class="dot unknown"></span>Unknown</div>
     </div>
 
-    <div class="disclaimer">Disclaimers...</div>
+    <p class="disclaimer">Status updates are approximate.</p>
   </main>
+
+  <script>
+    const colourMap = {
+      'choice-a': 'sel-a',
+      'choice-b': 'sel-b',
+      'choice-c': 'sel-c',
+      'choice-d': 'sel-d',
+    };
+
+    document.querySelectorAll('.level-select').forEach(select => {
+      function updateColour() {
+        Object.values(colourMap).forEach(cls => select.classList.remove(cls));
+        const cls = colourMap[select.value];
+        if (cls) select.classList.add(cls);
+      }
+      select.addEventListener('change', updateColour);
+      updateColour();
+    });
+  </script>
 </body>
 </html>
