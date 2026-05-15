@@ -53,19 +53,20 @@
     .subtitle { margin: 8px 0 0; color: var(--muted); font-size: 15px; }
 
     .levels {
-      width: min(565px, calc(100vw - 48px));
+      width: min(600px, calc(100vw - 32px));
       margin: 67px auto 0;
       display: flex; flex-direction: column; gap: 14px;
     }
 
     .card {
-      min-height: 112px;
+      min-height: 90px;
       border-radius: 34px;
       background: var(--card-bg);
       border: 1px solid var(--border);
       box-shadow: 0 18px 35px rgba(15, 23, 42, 0.08);
       display: flex; align-items: center; justify-content: space-between;
-      gap: 24px; padding: 0 37px 0 70px;
+      flex-wrap: wrap;
+      gap: 16px; padding: 20px 28px 20px 44px;
       position: relative; overflow: hidden;
       transition: 0.25s ease;
     }
@@ -86,10 +87,10 @@
     .card:has(select option[value="choice-c"]:checked) { box-shadow: 0 18px 35px rgba(245, 166, 35, 0.18); }
     .card:has(select option[value="choice-d"]:checked) { box-shadow: 0 18px 35px rgba(239, 68, 68, 0.18); }
 
-    .card-title { font-size: 16px; color: #9aa5b1; letter-spacing: 0.2px; white-space: nowrap; }
+    .card-title { font-size: 16px; color: #9aa5b1; letter-spacing: 0.2px; flex: 1 1 auto; }
 
     .level-select {
-      min-width: 220px;
+      flex: 0 0 auto;
       border: 1px solid #b9b9b9; border-radius: 6px;
       background: linear-gradient(#f4f4f4, #dcdcdc);
       color: #202124; font-size: 14px; font-weight: 700;
@@ -130,12 +131,19 @@
 
     .disclaimer { position: absolute; left: 44px; bottom: 38px; color: #536476; font-size: 13px; }
 
-    @media (max-width: 680px) {
-      .page { padding: 28px 20px; }
+    @media (max-width: 500px) {
+      .page { padding: 28px 16px; }
       .header { align-items: flex-start; }
-      .levels { margin-top: 50px; }
-      .card { padding: 24px; border-radius: 24px; flex-direction: column; gap: 18px; text-align: center; }
-      .card-title { white-space: normal; }
+      .levels { margin-top: 40px; }
+      .card {
+        padding: 20px 20px 20px 36px;
+        border-radius: 24px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+        text-align: center;
+      }
+      .level-select { width: 100%; }
       .disclaimer { position: static; margin-top: 35px; }
     }
   </style>
@@ -147,7 +155,7 @@
       <div class="logo">KC</div>
       <div>
         <h1 class="title">Kate's Corner</h1>
-        <p class="subtitle">A quick peek at how busy Kate is</p>
+        <p class="subtitle">A quick peek at how busy Kate Edger's study rooms are</p>
       </div>
     </header>
 
