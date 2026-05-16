@@ -146,7 +146,129 @@
       .level-select { width: 100%; }
       .disclaimer { position: static; margin-top: 35px; }
     }
-  </style>
+
+
+/* Share / Bookmark CTA (scoped to avoid affecting existing page styles) */
+#kcShareBookmark {
+  position: absolute;
+  left: 1cm; /* offset from the left border of the page */
+  top: 118px; /* sits under the “Kate's Corner” heading */
+  z-index: 10;
+}
+
+#kcShareBookmark .kc-bookmark-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 9px 12px;
+  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.06);
+  color: var(--navy);
+  font-weight: 800;
+  cursor: pointer;
+  user-select: none;
+}
+
+#kcShareBookmark .kc-bookmark-btn:hover {
+  box-shadow: 0 14px 26px rgba(15, 23, 42, 0.10);
+  transform: translateY(-1px);
+}
+
+#kcShareBookmark .kc-bookmark-btn:active {
+  transform: translateY(0);
+}
+
+#kcShareBookmark .kc-bookmark-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke: var(--navy);
+  fill: none;
+  stroke-width: 2;
+}
+
+/* Modal */
+#kcBmOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  z-index: 100;
+}
+
+#kcBmOverlay.open { display: flex; }
+
+#kcBmOverlay .kc-bm-modal {
+  width: min(520px, 92vw);
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25);
+  padding: 18px;
+}
+
+#kcBmOverlay .kc-bm-modal h2 {
+  font-size: 16px;
+  margin: 0 0 10px 0;
+  color: var(--navy);
+}
+
+#kcBmOverlay .kc-bm-modal p {
+  margin: 0 0 10px 0;
+  color: #444;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+#kcBmOverlay .kc-bm-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+#kcBmOverlay .kc-bm-btn {
+  appearance: none;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+#kcBmOverlay .kc-bm-btn.primary {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+
+#kcBmOverlay .kc-bm-tip {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 12px;
+  background: #f6f7f9;
+  border: 1px solid #e6e7ea;
+  font-size: 12px;
+  color: #333;
+}
+
+#kcBmOverlay .kc-bm-tip ol { margin: 8px 0 0 18px; padding: 0; }
+#kcBmOverlay .kc-bm-tip li { margin: 6px 0; }
+
+@media (max-width: 500px) {
+  #kcShareBookmark {
+    position: static;
+    margin-top: 12px;
+    align-self: flex-start;
+  }
+}
+
+</style>
 </head>
 
 <body>
@@ -158,6 +280,33 @@
         <p class="subtitle">A quick peek at how busy Kate Edger's study rooms are</p>
       </div>
     </header>
+
+<div id="kcShareBookmark">
+  <button class="kc-bookmark-btn" id="kcShareBookmarkBtn" type="button" aria-label="Share / Bookmark this page">
+    <!-- Bookmark/star icon -->
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M12 3.2l2.6 5.4 6 .9-4.3 4.2 1 5.9L12 16.9 6.7 19.6l1-5.9L3.4 9.5l6-.9L12 3.2z"/>
+    </svg>
+    <span>Share / Bookmark this page</span>
+  </button>
+</div>
+
+<!-- Share/Bookmark helper modal -->
+<div id="kcBmOverlay" role="dialog" aria-modal="true" aria-labelledby="kcBmTitle">
+  <div class="kc-bm-modal">
+    <h2 id="kcBmTitle">Share / Bookmark this page</h2>
+    <p id="kcBmStatus">Browsers usually don’t allow websites to create bookmarks automatically. This button will try the best available option, then show quick steps.</p>
+
+    <div class="kc-bm-actions">
+      <button class="kc-bm-btn" id="kcBmCloseBtn" type="button">Close</button>
+      <button class="kc-bm-btn" id="kcBmCopyBtn" type="button">Copy link</button>
+      <button class="kc-bm-btn primary" id="kcBmShareBtn" type="button">Share</button>
+    </div>
+
+    <div class="kc-bm-tip" id="kcBmTip" style="display:none;"></div>
+  </div>
+</div>
+
 
     <section class="levels">
 
@@ -236,5 +385,105 @@
       updateColour();
     });
   </script>
+
+
+<script>
+(function(){
+  const btn = document.getElementById('kcShareBookmarkBtn');
+  const overlay = document.getElementById('kcBmOverlay');
+  const closeBtn = document.getElementById('kcBmCloseBtn');
+  const copyBtn = document.getElementById('kcBmCopyBtn');
+  const shareBtn = document.getElementById('kcBmShareBtn');
+  const tipBox = document.getElementById('kcBmTip');
+  const statusLine = document.getElementById('kcBmStatus');
+
+  if (!btn || !overlay) return;
+
+  const pageUrl = window.location.href;
+  const pageTitle = document.title || "Kate's Corner";
+
+  function openModal(){ overlay.classList.add('open'); }
+  function closeModal(){
+    overlay.classList.remove('open');
+    tipBox.style.display = 'none';
+    tipBox.innerHTML = '';
+    statusLine.textContent = "Browsers usually don’t allow websites to create bookmarks automatically. This button will try the best available option, then show quick steps.";
+  }
+
+  function showTips(){
+    const ua = navigator.userAgent || '';
+    const isIOS = /iPhone|iPad|iPod/i.test(ua);
+    const isAndroid = /Android/i.test(ua);
+    const isMac = /Macintosh|Mac OS X/i.test(ua);
+
+    let html = '<ol>';
+    if (isIOS) {
+      html += '<li>Open in <b>Safari</b>.</li>';
+      html += '<li>Tap <b>Share</b> (square with an up arrow).</li>';
+      html += '<li>Select <b>Add Bookmark</b> (or add to Reading List).</li>';
+    } else if (isAndroid) {
+      html += '<li>Open the browser menu (⋮).</li>';
+      html += '<li>Tap the <b>Star</b> / <b>Bookmark</b> option.</li>';
+    } else {
+      html += `<li>Press <b>${isMac ? '⌘ Cmd' : 'Ctrl'} + D</b> to bookmark this page.</li>`;
+      html += '<li>Or use your browser’s star/bookmark icon in the address bar.</li>';
+    }
+    html += '</ol>';
+    html += '<div style="margin-top:8px;"><b>Link:</b> ' + pageUrl + '</div>';
+
+    tipBox.innerHTML = html;
+    tipBox.style.display = 'block';
+  }
+
+  function tryLegacyBookmark(url, title){
+    try {
+      if (window.sidebar && window.sidebar.addPanel) { window.sidebar.addPanel(title, url, ''); return true; }
+      if (window.external && ('AddFavorite' in window.external)) { window.external.AddFavorite(url, title); return true; }
+    } catch (_) {}
+    return false;
+  }
+
+  async function doShare(){
+    if (!navigator.share) return false;
+    try { await navigator.share({ title: pageTitle, url: pageUrl }); return true; } catch (_) { return false; }
+  }
+
+  async function copyLink(){
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(pageUrl);
+      } else {
+        window.prompt('Copy this link:', pageUrl);
+      }
+      statusLine.textContent = 'Link copied. You can paste it wherever you like.';
+    } catch (_) {
+      window.prompt('Copy this link:', pageUrl);
+    }
+  }
+
+  btn.addEventListener('click', async () => {
+    const legacyWorked = tryLegacyBookmark(pageUrl, pageTitle);
+    const shared = legacyWorked ? false : await doShare();
+
+    openModal();
+    if (legacyWorked) {
+      statusLine.textContent = 'If supported by your browser, a bookmark dialog should have opened.';
+    } else if (shared) {
+      statusLine.textContent = 'Share opened. If you don’t see a bookmark option, use the steps below.';
+    } else {
+      statusLine.textContent = 'Your browser won’t allow automatic bookmarking from a webpage. Use the steps below.';
+    }
+    showTips();
+  });
+
+  closeBtn.addEventListener('click', closeModal);
+  copyBtn.addEventListener('click', copyLink);
+  shareBtn.addEventListener('click', doShare);
+
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal(); });
+})();
+</script>
+
 </body>
 </html>
