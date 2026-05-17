@@ -6,6 +6,25 @@
   <title>Kate's Corner</title>
 
   <style>
+#liveDateTime {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #24384d;
+
+  /* ✅ OPTIONAL STYLE (put it here) */
+  background: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.level-update {
+  font-size: 12px;
+  color: #64748b;
+  margin: 4px 0 8px 10px;
+}
     :root {
       --navy: #003b73;
       --page-bg: #f8fafc;
@@ -272,6 +291,7 @@
 </head>
 
 <body>
+<div id="liveDateTime"></div>
   <main class="page">
     <header class="header">
       <div class="logo">KC</div>
@@ -320,6 +340,9 @@
           <option value="choice-d">Full – Basically no seats left</option>
         </select>
       </div>
+</div> <!-- end of card -->
+
+<div class="level-update">Last updated: --</div>
 
       <div class="card">
         <span class="card-title">Level 2 – Collaborative Study Space</span>
@@ -331,6 +354,9 @@
           <option value="choice-d">Full – Basically no seats left</option>
         </select>
       </div>
+</div> <!-- end of card -->
+
+<div class="level-update">Last updated: --</div>
 
       <div class="card">
         <span class="card-title">Level 3 – Quiet Study Space</span>
@@ -342,6 +368,9 @@
           <option value="choice-d">Full – Basically no seats left</option>
         </select>
       </div>
+</div> <!-- end of card -->
+
+<div class="level-update">Last updated: --</div>
 
       <div class="card">
         <span class="card-title">Level 4 – Silent Study Space</span>
@@ -353,6 +382,9 @@
           <option value="choice-d">Full – Basically no seats left</option>
         </select>
       </div>
+</div> <!-- end of card -->
+
+<div class="level-update">Last updated: --</div>
 
     </section>
 
@@ -483,7 +515,58 @@
   overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal(); });
 })();
-</script>
+function updateDateTime() {
+  const now = new Date();
 
+  const date = now.toLocaleDateString();
+  const time = now.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  });
+
+  document.getElementById("liveDateTime").textContent =
+    date + " | " + time;
+}
+
+// update immediately + every second
+updateDateTime();
+setInterval(updateDateTime, 1000);
+function getFormattedTime() {
+  const now = new Date();
+
+  return now.toLocaleDateString() + " at " +
+         now.toLocaleTimeString([], {
+           hour: '2-digit',
+           minute: '2-digit'
+         });
+}
+
+document.querySelectorAll('.level-select').forEach(select => {
+
+  select.addEventListener('change', () => {
+
+    const card = select.closest('.card');
+
+    let updateLabel = card.nextElementSibling;
+
+// keep moving down until we find the correct line
+while (updateLabel && !updateLabel.classList.contains('level-update')) {
+  updateLabel = updateLabel.nextElementSibling;
+}
+
+if (updateLabel) {
+  updateLabel.textContent = "Last updated: " + getFormattedTime();
+}
+``
+
+    if (updateLabel && updateLabel.classList.contains('level-update')) {
+      updateLabel.textContent = "Last updated: " + getFormattedTime();
+    }
+
+  });
+
+});
+</script>
 </body>
 </html>
