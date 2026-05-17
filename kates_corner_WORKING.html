@@ -4,51 +4,180 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Kate's Corner</title>
+
 <style>
 :root {
- --navy: #003b73;
- --page-bg: #f8fafc;
- --card-bg: #ffffff;
- --text: #24384d;
- --muted: #51606f;
- --border: #e8edf3;
+  --navy: #003b73;
+  --page-bg: #f8fafc;
+  --card-bg: #ffffff;
+  --text: #24384d;
+  --muted: #51606f;
+  --border: #e8edf3;
+  --choice-a: #2ecc71;
+  --choice-b: #f5a623;
+  --choice-c: #ef4444;
+  --neutral: #cbd5e1;
 }
-body {margin:0; font-family:Arial; background:var(--page-bg);}
 
-#datetime-widget {
- position: fixed;
- top: 20px;
- right: 24px;
- background: var(--card-bg);
- border: 1px solid var(--border);
- padding: 10px 14px;
- border-radius: 10px;
- font-size: 13px;
- color: var(--text);
- box-shadow: 0 4px 12px rgba(0,0,0,0.05);
- cursor:pointer;
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--page-bg);
+  color: var(--text);
 }
-#datetime-widget span {font-size:12px;color:var(--muted);display:block;}
+
+.page { padding: 41px 44px; }
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 6px;
+  background: var(--navy);
+  color: white;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+}
+
+.title {
+  margin: 0;
+  color: var(--navy);
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.subtitle {
+  margin: 8px 0 0;
+  color: var(--muted);
+}
+
+.levels {
+  margin: 60px auto 0;
+  max-width: 565px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.card {
+  border-radius: 34px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  padding: 20px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.legend {
+  margin-top: 35px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+/* ✅ NEW FEATURE: DATE & TIME WIDGET */
+#datetime-widget {
+  position: fixed;
+  top: 20px;
+  right: 24px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--text);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  font-weight: 600;
+  z-index: 100;
+  cursor: pointer;
+}
+
+#datetime-widget span {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+}
 </style>
 </head>
+
 <body>
 
+<!-- ✅ NEW FEATURE ELEMENT -->
 <div id="datetime-widget"></div>
 
-<h1 style="padding:40px">Kate's Corner</h1>
+<main class="page">
 
+<header class="header">
+  <div class="logo">KC</div>
+  <div>
+    <h1 class="title">Kate's Corner</h1>
+    <p class="subtitle">A quick peek at how busy Kate is</p>
+  </div>
+</header>
+
+<section class="levels">
+  <div class="card">Level 0 - Collaborative Study Space <select><option>Choose one...</option></select></div>
+  <div class="card">Level 2 - Collaborative Study Space <select><option>Choose one...</option></select></div>
+  <div class="card">Level 3 - Quiet Study Space <select><option>Choose one...</option></select></div>
+  <div class="card">Level 4 - Silent Study Space <select><option>Choose one...</option></select></div>
+</section>
+
+<div class="legend">
+  <div>Option A</div>
+  <div>Option B</div>
+  <div>Option C</div>
+</div>
+
+</main>
+
+<!-- ✅ NEW FEATURE SCRIPT -->
 <script>
-let use24Hour=true;
-function update(){
- const n=new Date();
- const d=n.toLocaleDateString(undefined,{weekday:'short',year:'numeric',month:'short',day:'numeric'});
- const t=n.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:!use24Hour});
- const tz=Intl.DateTimeFormat().resolvedOptions().timeZone;
- document.getElementById('datetime-widget').innerHTML=`<strong>${t}</strong><span>${d} • ${tz}</span>`;
+let use24Hour = true;
+
+function updateDateTime() {
+  const now = new Date();
+
+  const date = now.toLocaleDateString(undefined, {
+    weekday: 'short',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
+
+  const time = now.toLocaleTimeString(undefined, {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: !use24Hour
+  });
+
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  document.getElementById("datetime-widget").innerHTML = `
+    <strong>${time}</strong>
+    <span>${date} • ${timezone}</span>
+  `;
 }
 
-document.getElementById('datetime-widget').onclick=function(){use24Hour=!use24Hour;update();};
-update(); setInterval(update,1000);
+/* click to toggle 12h / 24h */
+document.getElementById("datetime-widget").addEventListener("click", () => {
+  use24Hour = !use24Hour;
+  updateDateTime();
+});
+
+/* run clock */
+updateDateTime();
+setInterval(updateDateTime, 1000);
 </script>
 
 </body>
