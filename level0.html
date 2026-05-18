@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Update Status – Kate's Corner</title>
+  <title>Kate's Corner</title>
   <style>
     #liveDateTime {
       position: fixed; top: 16px; right: 20px;
@@ -12,6 +12,7 @@
       border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       z-index: 50;
     }
+    .level-update { font-size: 12px; color: #64748b; margin: 4px 0 8px 10px; }
 
     :root {
       --navy: #003b73;
@@ -24,12 +25,12 @@
       --choice-b: #a8d94a;
       --choice-c: #f5a623;
       --choice-d: #ef4444;
+      --neutral:  #cbd5e1;
     }
     * { box-sizing: border-box; }
     body { margin: 0; min-height: 100vh; font-family: Arial, Helvetica, sans-serif; background: var(--page-bg); color: var(--text); }
     .page { min-height: 100vh; padding: 41px 44px; position: relative; }
-    
-    .header { display: flex; align-items: center; gap: 20px; margin-bottom: 30px; }
+    .header { display: flex; align-items: center; gap: 20px; }
     .logo {
       width: 56px; height: 56px; border-radius: 6px;
       background: var(--navy); color: white;
@@ -40,65 +41,136 @@
     .title { margin: 0; color: var(--navy); font-size: 28px; line-height: 1; font-weight: 800; }
     .subtitle { margin: 8px 0 0; color: var(--muted); font-size: 15px; }
 
-    /* Back Button Styling */
-    .back-btn {
-      display: inline-flex; align-items: center; gap: 8px;
-      text-decoration: none; font-size: 14px; font-weight: 700; color: var(--navy);
-      background: #eef4fb; padding: 10px 18px; border-radius: 999px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: all 0.2s ease;
-      margin-bottom: 25px;
+    .live-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #f0fdf4; border: 1px solid #bbf7d0;
+      border-radius: 20px; padding: 4px 10px;
+      font-size: 12px; font-weight: 600; color: #15803d; margin-top: 8px;
     }
-    .back-btn:hover { background: #dcecff; transform: translateX(-2px); box-shadow: 0 6px 14px rgba(0,0,0,0.08); }
-    .back-btn svg { fill: var(--navy); }
+    .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; animation: pulse 1.8s ease-in-out infinite; }
+    .live-dot.offline { background: #94a3b8; animation: none; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.85)} }
 
-    /* Form Container Layout */
-    .form-container { width: min(500px, calc(100vw - 32px)); margin: 20px auto 0; }
-    
-    .update-box {
-      background: var(--card-bg); border: 1px solid var(--border); border-radius: 24px;
-      padding: 30px; box-shadow: 0 18px 35px rgba(15,23,42,0.08);
+    .levels { width: min(600px, calc(100vw - 32px)); margin: 50px auto 0; display: flex; flex-direction: column; gap: 14px; }
+
+    .card {
+      min-height: 90px; border-radius: 34px;
+      background: var(--card-bg); border: 1px solid var(--border);
+      box-shadow: 0 18px 35px rgba(15,23,42,0.08);
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; padding: 20px 28px 20px 44px;
+      position: relative; overflow: hidden; transition: 0.25s ease;
     }
-    .update-box h2 { margin: 0 0 8px 0; font-size: 20px; color: var(--navy); font-weight: 800; }
-    .update-box p { margin: 0 0 24px 0; font-size: 14px; color: var(--muted); }
-
-    /* Custom Radio Option Buttons */
-    .radio-group { display: flex; flex-direction: column; gap: 12px; }
-    .radio-label {
-      display: flex; align-items: center; gap: 14px; padding: 16px 20px;
-      border: 2px solid var(--border); border-radius: 16px; cursor: pointer;
-      font-weight: 700; font-size: 15px; transition: all 0.2s ease; position: relative;
+    .card::before {
+      content: ""; position: absolute; left: 0; top: 0;
+      width: 14px; height: 100%; background: var(--neutral); transition: background 0.25s ease;
     }
-    .radio-label input { position: absolute; opacity: 0; cursor: pointer; }
-    
-    /* Dynamic choice indicator rings */
-    .custom-radio { width: 20px; height: 20px; border: 2px solid var(--border); border-radius: 50%; display: inline-block; transition: all 0.2s ease; }
-    
-    /* Specific row color highlights when selected */
-    .radio-label:has(input[value="choice-a"]):hover, .radio-label:has(input[value="choice-a"]:checked) { border-color: var(--choice-a); background: #f0fdf4; }
-    .radio-label:has(input[value="choice-b"]):hover, .radio-label:has(input[value="choice-b"]:checked) { border-color: var(--choice-b); background: #f0fce4; }
-    .radio-label:has(input[value="choice-c"]):hover, .radio-label:has(input[value="choice-c"]:checked) { border-color: var(--choice-c); background: #fff7ed; }
-    .radio-label:has(input[value="choice-d"]):hover, .radio-label:has(input[value="choice-d"]:checked) { border-color: var(--choice-d); background: #fef2f2; }
+    .card[data-value="choice-a"]::before { background: var(--choice-a); }
+    .card[data-value="choice-b"]::before { background: var(--choice-b); }
+    .card[data-value="choice-c"]::before { background: var(--choice-c); }
+    .card[data-value="choice-d"]::before { background: var(--choice-d); }
+    .card[data-value="choice-a"] { box-shadow: 0 18px 35px rgba(46,204,113,0.16); }
+    .card[data-value="choice-b"] { box-shadow: 0 18px 35px rgba(168,217,74,0.20); }
+    .card[data-value="choice-c"] { box-shadow: 0 18px 35px rgba(245,166,35,0.18); }
+    .card[data-value="choice-d"] { box-shadow: 0 18px 35px rgba(239,68,68,0.18); }
 
-    .radio-label:has(input[value="choice-a"]:checked) .custom-radio { border-color: var(--choice-a); background: var(--choice-a); }
-    .radio-label:has(input[value="choice-b"]:checked) .custom-radio { border-color: var(--choice-b); background: var(--choice-b); }
-    .radio-label:has(input[value="choice-c"]:checked) .custom-radio { border-color: var(--choice-c); background: var(--choice-c); }
-    .radio-label:has(input[value="choice-d"]:checked) .custom-radio { border-color: var(--choice-d); background: var(--choice-d); }
+    .card-info { display: flex; flex-direction: column; gap: 8px; flex: 1 1 auto; }
+    .card-title { font-size: 16px; color: #24384d; letter-spacing: 0.2px; }
 
-    /* Action buttons */
-    .submit-btn {
-      width: 100%; margin-top: 24px; padding: 14px; border: none;
-      border-radius: 14px; background: var(--navy); color: white;
-      font-size: 16px; font-weight: 700; cursor: pointer;
-      box-shadow: 0 8px 15px rgba(0,59,115,0.2); transition: all 0.2s ease;
+    .update-btn {
+      align-self: flex-start;
+      display: inline-flex; align-items: center;
+      padding: 6px 14px; border-radius: 12px;
+      font-size: 13px; font-weight: 700; color: var(--navy);
+      background: #eef4fb; text-decoration: none;
+      transition: 0.2s ease;
     }
-    .submit-btn:hover { transform: translateY(-1px); box-shadow: 0 12px 20px rgba(0,59,115,0.3); opacity: 0.95; }
-    .submit-btn:disabled { background: #cbd5e1; cursor: not-allowed; box-shadow: none; }
+    .update-btn:hover { background: #dcecff; }
 
-    #statusMessage { margin-top: 14px; font-size: 13px; font-weight: 600; text-align: center; display: none; }
+    /* Status badge (replaces dropdown) */
+    .status-badge {
+      flex: 0 0 auto;
+      padding: 8px 16px; border-radius: 20px;
+      font-size: 14px; font-weight: 700;
+      border: 2px solid transparent;
+      transition: 0.25s ease;
+      white-space: nowrap;
+    }
+    .status-badge.unknown  { background: #f1f5f9; color: #94a3b8; border-color: #e2e8f0; }
+    .status-badge.choice-a { background: #dcfce7; color: #15803d; border-color: #bbf7d0; }
+    .status-badge.choice-b { background: #f0fce4; color: #4a7a00; border-color: #d4f0a0; }
+    .status-badge.choice-c { background: #fff7ed; color: #c2410c; border-color: #fed7aa; }
+    .status-badge.choice-d { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
 
+    .legend {
+      display: flex; justify-content: center; flex-wrap: wrap;
+      gap: 10px; margin-top: 35px;
+    }
+    .legend-item {
+      background: #fff; border-radius: 6px; padding: 10px 14px;
+      display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+      color: #334155; font-size: 13px;
+      box-shadow: 0 8px 18px rgba(15,23,42,0.04);
+    }
+    .dot { width: 15px; height: 15px; border-radius: 4px; display: inline-block; flex-shrink: 0; }
+    .dot.choice-a { background: var(--choice-a); }
+    .dot.choice-b { background: var(--choice-b); }
+    .dot.choice-c { background: var(--choice-c); }
+    .dot.choice-d { background: var(--choice-d); }
+    .dot.unknown  { background: var(--neutral); }
+    .legend-desc  { font-size: 11px; color: #64748b; margin-top: 1px; }
+
+    .intro-box {
+      width: min(600px, calc(100vw - 32px)); margin: 28px auto 0;
+      background: #eef4fb; border: 1px solid #cddcee;
+      border-radius: 14px; padding: 14px 20px;
+      color: #2e4a66; font-size: 14px; line-height: 1.55;
+    }
+
+    .disclaimer { position: absolute; left: 44px; bottom: 38px; color: #536476; font-size: 13px; }
+
+    /* Share / Bookmark */
+    #kcShareBookmark { position: absolute; left: 1cm; top: 118px; z-index: 10; }
+    #kcShareBookmark .kc-bookmark-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: #fff; border: 1px solid var(--border); border-radius: 999px; padding: 9px 12px;
+      box-shadow: 0 10px 20px rgba(15,23,42,0.06); color: var(--navy); font-weight: 800; cursor: pointer;
+    }
+    #kcShareBookmark .kc-bookmark-btn:hover { transform: translateY(-1px); box-shadow: 0 14px 26px rgba(15,23,42,0.10); }
+    #kcShareBookmark .kc-bookmark-btn svg { width: 18px; height: 18px; stroke: var(--navy); fill: none; stroke-width: 2; }
+
+    #kcBmOverlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: none; justify-content: center; align-items: center; padding: 16px; z-index: 100; }
+    #kcBmOverlay.open { display: flex; }
+    #kcBmOverlay .kc-bm-modal { width: min(520px,92vw); background: #fff; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,.25); padding: 18px; }
+    #kcBmOverlay .kc-bm-modal h2 { font-size: 16px; margin: 0 0 10px; color: var(--navy); }
+    #kcBmOverlay .kc-bm-modal p { margin: 0 0 10px; color: #444; font-size: 13px; line-height: 1.35; }
+    #kcBmOverlay .kc-bm-actions { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; margin-top: 12px; }
+    #kcBmOverlay .kc-bm-btn { appearance: none; border: 1px solid #ddd; background: #fff; border-radius: 12px; padding: 10px 14px; font-weight: 800; cursor: pointer; }
+    #kcBmOverlay .kc-bm-btn.primary { background: #111; color: #fff; border-color: #111; }
+    #kcBmOverlay .kc-bm-tip { margin-top: 10px; padding: 10px; border-radius: 12px; background: #f6f7f9; border: 1px solid #e6e7ea; font-size: 12px; color: #333; }
+    #kcBmOverlay .kc-bm-tip ol { margin: 8px 0 0 18px; padding: 0; }
+    #kcBmOverlay .kc-bm-tip li { margin: 6px 0; }
+
+    /* Sidebar Ads */
+    .sidebar-container { position: fixed; right: 24px; top: 60px; display: flex; flex-direction: column; gap: 14px; z-index: 2; }
+    .sidebar-ad { width: 220px; background: rgba(255,255,255,0.9); border: 1px solid rgba(226,232,240,0.9); border-radius: 16px; padding: 16px; box-shadow: 0 6px 18px rgba(15,23,42,0.05); transition: 0.2s ease; }
+    .sidebar-ad:hover { transform: translateY(-2px); }
+    .ad-tag { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #64748b; margin-bottom: 10px; display: inline-block; }
+    .sidebar-ad h3 { margin: 0 0 8px; font-size: 16px; color: #334155; }
+    .sidebar-ad p  { margin: 0 0 14px; font-size: 13px; color: #64748b; }
+    .ad-btn { display: inline-block; text-decoration: none; background: #eef4fb; color: #003b73; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; }
+    .ad-btn:hover { background: #dcecff; }
+
+    @media (max-width: 1100px) {
+      .sidebar-container { position: static; width: min(600px, calc(100vw - 32px)); margin: 24px auto 0; }
+      .sidebar-ad { width: 100%; }
+    }
     @media (max-width: 500px) {
       .page { padding: 28px 16px; }
-      .update-box { padding: 20px; border-radius: 20px; }
+      .levels { margin-top: 40px; }
+      .card { padding: 20px 20px 20px 36px; border-radius: 24px; flex-wrap: wrap; gap: 12px; }
+      .disclaimer { position: static; margin-top: 35px; }
+      #kcShareBookmark { position: static; margin-top: 12px; }
     }
   </style>
 </head>
@@ -106,53 +178,137 @@
   <div id="liveDateTime"></div>
 
   <main class="page">
-    <a href="index.html" class="back-btn">
-      <svg viewBox="0 0 24 24" width="16" height="16"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
-      Back to Statuses
-    </a>
-
     <header class="header">
       <div class="logo">KC</div>
       <div>
-        <h1 class="title" id="pageTitle">Level Update</h1>
-        <p class="subtitle">Crowdsourced busyness track tracker</p>
+        <h1 class="title">Kate's Corner</h1>
+        <p class="subtitle">A quick peek at how busy Kate Edger's study rooms are</p>
+        <span class="live-badge">
+          <span class="live-dot offline" id="liveDot"></span>
+          <span id="liveLabel">Connecting…</span>
+        </span>
       </div>
     </header>
 
-    <div class="form-container">
-      <div class="update-box">
-        <h2 id="boxHeading">How busy is this floor?</h2>
-        <p>Select the option that matches the current environment to update your fellow students.</p>
+    <div id="kcShareBookmark">
+      <button class="kc-bookmark-btn" id="kcShareBookmarkBtn" type="button">
+        <svg viewBox="0 0 24 24"><path d="M12 3.2l2.6 5.4 6 .9-4.3 4.2 1 5.9L12 16.9 6.7 19.6l1-5.9L3.4 9.5l6-.9L12 3.2z"/></svg>
+        <span>Share / Bookmark this page</span>
+      </button>
+    </div>
 
-        <form id="updateForm">
-          <div class="radio-group">
-            <label class="radio-label">
-              <input type="radio" name="busyness" value="choice-a" required />
-              <span class="custom-radio"></span> Empty (Plenty of seats available)
-            </label>
-            <label class="radio-label">
-              <input type="radio" name="busyness" value="choice-b" />
-              <span class="custom-radio"></span> Moderate (Some spaces open)
-            </label>
-            <label class="radio-label">
-              <input type="radio" name="busyness" value="choice-c" />
-              <span class="custom-radio"></span> Limited (Nearly filled up)
-            </label>
-            <label class="radio-label">
-              <input type="radio" name="busyness" value="choice-d" />
-              <span class="custom-radio"></span> Full (No seats left)
-            </label>
-          </div>
-
-          <button type="submit" class="submit-btn" id="submitBtn">Submit Report</button>
-          <div id="statusMessage"></div>
-        </form>
+    <div id="kcBmOverlay" role="dialog" aria-modal="true">
+      <div class="kc-bm-modal">
+        <h2>Share / Bookmark this page</h2>
+        <p id="kcBmStatus">Browsers usually don't allow websites to create bookmarks automatically.</p>
+        <div class="kc-bm-actions">
+          <button class="kc-bm-btn" id="kcBmCloseBtn">Close</button>
+          <button class="kc-bm-btn" id="kcBmCopyBtn">Copy link</button>
+          <button class="kc-bm-btn primary" id="kcBmShareBtn">Share</button>
+        </div>
+        <div class="kc-bm-tip" id="kcBmTip" style="display:none;"></div>
       </div>
     </div>
+
+    <div class="intro-box">
+      <div style="text-align:center;font-size:16px;font-weight:800;line-height:1.5;color:#003b73;margin-bottom:10px;">
+        Live busyness status — updated by students on each floor
+      </div>
+      <div style="text-align:center;font-size:15px;line-height:1.8;color:#425466;">
+        Scan the QR code on each floor to report how busy it is.
+        This page updates in real time as students check in.
+      </div>
+    </div>
+
+    <section class="levels">
+
+      <div class="card" id="card-level0" data-value="">
+        <div class="card-info">
+          <span class="card-title">Level 0 – Collaborative Study Space</span>
+          <a href="https://kaliyana-h.github.io/KatesCorner/level0.html" class="update-btn">update</a>
+        </div>
+        <span class="status-badge unknown" id="badge-level0">Unknown</span>
+      </div>
+      <div class="level-update" id="update-level0">Last updated: --</div>
+
+      <div class="card" id="card-level2" data-value="">
+        <div class="card-info">
+          <span class="card-title">Level 2 – Collaborative Study Space</span>
+          <a href="https://kaliyana-h.github.io/KatesCorner/level2.html" class="update-btn">update</a>
+        </div>
+        <span class="status-badge unknown" id="badge-level2">Unknown</span>
+      </div>
+      <div class="level-update" id="update-level2">Last updated: --</div>
+
+      <div class="card" id="card-level3" data-value="">
+        <div class="card-info">
+          <span class="card-title">Level 3 – Quiet Study Space</span>
+          <a href="https://kaliyana-h.github.io/KatesCorner/level3.html" class="update-btn">update</a>
+        </div>
+        <span class="status-badge unknown" id="badge-level3">Unknown</span>
+      </div>
+      <div class="level-update" id="update-level3">Last updated: --</div>
+
+      <div class="card" id="card-level4" data-value="">
+        <div class="card-info">
+          <span class="card-title">Level 4 – Silent Study Space</span>
+          <a href="https://kaliyana-h.github.io/KatesCorner/level4.html" class="update-btn">update</a>
+        </div>
+        <span class="status-badge unknown" id="badge-level4">Unknown</span>
+      </div>
+      <div class="level-update" id="update-level4">Last updated: --</div>
+
+    </section>
+
+    <div class="legend">
+      <div class="legend-item">
+        <div style="display:flex;align-items:center;gap:8px;"><span class="dot choice-a"></span><strong>Empty</strong></div>
+        <div class="legend-desc">Plenty of seats — go right up</div>
+      </div>
+      <div class="legend-item">
+        <div style="display:flex;align-items:center;gap:8px;"><span class="dot choice-b"></span><strong>Moderate</strong></div>
+        <div class="legend-desc">Some seats available</div>
+      </div>
+      <div class="legend-item">
+        <div style="display:flex;align-items:center;gap:8px;"><span class="dot choice-c"></span><strong>Limited</strong></div>
+        <div class="legend-desc">Getting full — consider another floor</div>
+      </div>
+      <div class="legend-item">
+        <div style="display:flex;align-items:center;gap:8px;"><span class="dot choice-d"></span><strong>Full</strong></div>
+        <div class="legend-desc">No seats left — try elsewhere</div>
+      </div>
+      <div class="legend-item">
+        <div style="display:flex;align-items:center;gap:8px;"><span class="dot unknown"></span><strong>Unknown</strong></div>
+        <div class="legend-desc">Status not yet reported</div>
+      </div>
+    </div>
+
+    <p class="disclaimer">Status updates are approximate and submitted by students.</p>
   </main>
 
+  <div class="sidebar-container">
+    <div class="sidebar-ad">
+      <span class="ad-tag">Sponsored</span>
+      <h3>Campus Café ☕</h3>
+      <p>Student coffee specials and quiet seating throughout the week.</p>
+      <a href="#" class="ad-btn">View Offer</a>
+    </div>
+    <div class="sidebar-ad">
+      <span class="ad-tag">Sponsored</span>
+      <h3>University Bookstore 📚</h3>
+      <p>Discounts on stationery, notebooks, and selected course materials.</p>
+      <a href="#" class="ad-btn">Browse Deals</a>
+    </div>
+    <div class="sidebar-ad">
+      <span class="ad-tag">Sponsored</span>
+      <h3>Campus Eats 🍔</h3>
+      <p>Nearby restaurants with student deals and late-night meals.</p>
+      <a href="#" class="ad-btn">Explore Food</a>
+    </div>
+  </div>
+
   <script>
-    // Live Dynamic Header Clock
+    // Clock
     function updateDateTime() {
       document.getElementById("liveDateTime").textContent =
         new Date().toLocaleDateString() + " | " +
@@ -160,25 +316,43 @@
     }
     updateDateTime(); setInterval(updateDateTime, 1000);
 
-    // Auto-detect which file this is to adjust headings automatically!
-    const filename = window.location.pathname.split('/').pop() || "level0.html";
-    const currentLevelKey = filename.replace('.html', ''); // e.g. "level0"
-    const displayNames = {
-      "level0": "Level 0 – Collaborative Study Space",
-      "level2": "Level 2 – Collaborative Study Space",
-      "level3": "Level 3 – Quiet Study Space",
-      "level4": "Level 4 – Silent Study Space"
-    };
-    
-    if (displayNames[currentLevelKey]) {
-      document.getElementById("pageTitle").textContent = "Update " + currentLevelKey.replace('l', 'L');
-      document.getElementById("boxHeading").textContent = displayNames[currentLevelKey];
-    }
+    // Share modal
+    (function(){
+      const btn = document.getElementById('kcShareBookmarkBtn');
+      const overlay = document.getElementById('kcBmOverlay');
+      const closeBtn = document.getElementById('kcBmCloseBtn');
+      const copyBtn = document.getElementById('kcBmCopyBtn');
+      const shareBtn = document.getElementById('kcBmShareBtn');
+      const tipBox = document.getElementById('kcBmTip');
+      const statusLine = document.getElementById('kcBmStatus');
+      const pageUrl = window.location.href;
+      const pageTitle = document.title;
+      const open = () => overlay.classList.add('open');
+      const close = () => { overlay.classList.remove('open'); tipBox.style.display='none'; };
+      function showTips(){
+        const ua = navigator.userAgent;
+        let html = '<ol>';
+        if (/iPhone|iPad|iPod/i.test(ua)) html += '<li>Open in <b>Safari</b>.</li><li>Tap <b>Share</b> → <b>Add Bookmark</b>.</li>';
+        else if (/Android/i.test(ua)) html += '<li>Open browser menu (⋮).</li><li>Tap <b>Bookmark</b>.</li>';
+        else html += `<li>Press <b>${/Mac/i.test(ua)?'⌘':'Ctrl'} + D</b>.</li>`;
+        html += '</ol><div style="margin-top:8px"><b>Link:</b> ' + pageUrl + '</div>';
+        tipBox.innerHTML = html; tipBox.style.display = 'block';
+      }
+      async function doShare(){ if (!navigator.share) return; try { await navigator.share({title:pageTitle,url:pageUrl}); } catch(_){} }
+      btn.addEventListener('click', () => { open(); showTips(); doShare(); });
+      closeBtn.addEventListener('click', close);
+      copyBtn.addEventListener('click', async () => {
+        try { await navigator.clipboard.writeText(pageUrl); statusLine.textContent='Link copied!'; } catch(_){ window.prompt('Copy:', pageUrl); }
+      });
+      shareBtn.addEventListener('click', doShare);
+      overlay.addEventListener('click', e => { if (e.target===overlay) close(); });
+      document.addEventListener('keydown', e => { if (e.key==='Escape') close(); });
+    })();
   </script>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getDatabase, ref, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey:            "AIzaSyA9JJLRflZghT5y0To_lc384iOARQNnzfw",
@@ -192,49 +366,53 @@
     };
 
     const db = getDatabase(initializeApp(firebaseConfig));
-    const filename = window.location.pathname.split('/').pop() || "level0.html";
-    const currentLevelKey = filename.replace('.html', ''); 
+    const LEVELS = ["level0","level2","level3","level4"];
 
-    const form = document.getElementById("updateForm");
-    const submitBtn = document.getElementById("submitBtn");
-    const statusMsg = document.getElementById("statusMessage");
+    const LABELS = {
+      'choice-a': 'Empty',
+      'choice-b': 'Moderate',
+      'choice-c': 'Limited',
+      'choice-d': 'Full'
+    };
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      
-      const selectedChoice = form.elements["busyness"].value;
-      if (!selectedChoice) return;
+    function formatTime(iso) {
+      if (!iso) return "--";
+      const d = new Date(iso);
+      return d.toLocaleDateString() + " at " + d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    }
 
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Submitting...";
+    function applyToUI(key, value, updatedAt) {
+      const card  = document.getElementById(`card-${key}`);
+      const badge = document.getElementById(`badge-${key}`);
+      const label = document.getElementById(`update-${key}`);
 
-      // Prepare payload structured cleanly for index.html data pipeline map readings
-      const updates = {};
-      updates[`kates-corner/levels/${currentLevelKey}`] = {
-        value: selectedChoice,
-        updatedAt: new Date().toISOString()
-      };
+      card.dataset.value = value || "";
 
-      try {
-        await update(ref(db), updates);
-        
-        statusMsg.style.color = "#16a34a";
-        statusMsg.textContent = "Status updated successfully! Redirecting...";
-        statusMsg.style.display = "block";
-
-        // Bring students right back to your dashboard grid automatically after 1.5 seconds!
-        setTimeout(() => {
-          window.location.href = "index.html";
-        }, 1500);
-
-      } catch (error) {
-        console.error("Firebase update failed:", error);
-        statusMsg.style.color = "#dc2626";
-        statusMsg.textContent = "Error updating status. Please try again.";
-        statusMsg.style.display = "block";
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Submit Report";
+      // Reset badge classes
+      badge.className = "status-badge";
+      if (value && LABELS[value]) {
+        badge.classList.add(value);
+        badge.textContent = LABELS[value];
+      } else {
+        badge.classList.add("unknown");
+        badge.textContent = "Unknown";
       }
+
+      if (label) label.textContent = "Last updated: " + (updatedAt ? formatTime(updatedAt) : "--");
+    }
+
+    onValue(ref(db, "kates-corner/levels"), (snapshot) => {
+      document.getElementById("liveDot").classList.remove("offline");
+      document.getElementById("liveLabel").textContent = "Live";
+
+      const data = snapshot.val() || {};
+      LEVELS.forEach(key => {
+        const entry = data[key] || {};
+        applyToUI(key, entry.value || "", entry.updatedAt || null);
+      });
+    }, () => {
+      document.getElementById("liveDot").classList.add("offline");
+      document.getElementById("liveLabel").textContent = "Offline";
     });
   </script>
 </body>
