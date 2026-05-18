@@ -6,25 +6,20 @@
   <title>Kate's Corner</title>
 
   <style>
-#liveDateTime {
-  position: fixed;
-  top: 16px;
-  right: 20px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #24384d;
+    #liveDateTime {
+      position: fixed;
+      top: 16px; right: 20px;
+      font-size: 14px; font-weight: 600; color: #24384d;
+      background: white; padding: 6px 12px;
+      border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      z-index: 50;
+    }
 
-  /* ✅ OPTIONAL STYLE (put it here) */
-  background: white;
-  padding: 6px 12px;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-.level-update {
-  font-size: 12px;
-  color: #64748b;
-  margin: 4px 0 8px 10px;
-}
+    .level-update {
+      font-size: 12px; color: #64748b;
+      margin: 4px 0 8px 10px;
+    }
+
     :root {
       --navy: #003b73;
       --page-bg: #f8fafc;
@@ -32,37 +27,28 @@
       --text: #24384d;
       --muted: #51606f;
       --border: #e8edf3;
-
-      --choice-a: #2ecc71;   /* Empty    – green        */
-      --choice-b: #a8d94a;   /* Moderate – yellow-green */
-      --choice-c: #f5a623;   /* Limited  – orange       */
-      --choice-d: #ef4444;   /* Full     – red          */
-      --neutral:  #cbd5e1;   /* Unknown  – grey         */
+      --choice-a: #2ecc71;
+      --choice-b: #a8d94a;
+      --choice-c: #f5a623;
+      --choice-d: #ef4444;
+      --neutral:  #cbd5e1;
     }
 
     * { box-sizing: border-box; }
 
     body {
-      margin: 0;
-      min-height: 100vh;
+      margin: 0; min-height: 100vh;
       font-family: Arial, Helvetica, sans-serif;
-      background: var(--page-bg);
-      color: var(--text);
+      background: var(--page-bg); color: var(--text);
     }
 
-    .page {
-      min-height: 100vh;
-      padding: 41px 44px;
-      position: relative;
-    }
+    .page { min-height: 100vh; padding: 41px 44px; position: relative; }
 
     .header { display: flex; align-items: center; gap: 20px; }
 
     .logo {
-      width: 56px; height: 56px;
-      border-radius: 6px;
-      background: var(--navy);
-      color: white;
+      width: 56px; height: 56px; border-radius: 6px;
+      background: var(--navy); color: white;
       display: grid; place-items: center;
       font-weight: 700; letter-spacing: 0.5px;
       box-shadow: 0 8px 15px rgba(0, 59, 115, 0.22);
@@ -71,6 +57,24 @@
     .title { margin: 0; color: var(--navy); font-size: 28px; line-height: 1; font-weight: 800; }
     .subtitle { margin: 8px 0 0; color: var(--muted); font-size: 15px; }
 
+    /* Live badge */
+    .live-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #f0fdf4; border: 1px solid #bbf7d0;
+      border-radius: 20px; padding: 4px 10px;
+      font-size: 12px; font-weight: 600; color: #15803d;
+      margin-top: 8px;
+    }
+    .live-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #22c55e; animation: pulse 1.8s ease-in-out infinite;
+    }
+    .live-dot.offline { background: #94a3b8; animation: none; }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.85); }
+    }
+
     .levels {
       width: min(600px, calc(100vw - 32px));
       margin: 67px auto 0;
@@ -78,33 +82,30 @@
     }
 
     .card {
-      min-height: 90px;
-      border-radius: 34px;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
+      min-height: 90px; border-radius: 34px;
+      background: var(--card-bg); border: 1px solid var(--border);
       box-shadow: 0 18px 35px rgba(15, 23, 42, 0.08);
       display: flex; align-items: center; justify-content: space-between;
       flex-wrap: wrap;
       gap: 16px; padding: 20px 28px 20px 44px;
-      position: relative; overflow: hidden;
-      transition: 0.25s ease;
+      position: relative; overflow: hidden; transition: 0.25s ease;
     }
 
     .card::before {
       content: ""; position: absolute; left: 0; top: 0;
       width: 14px; height: 100%;
-      background: var(--neutral); transition: 0.25s ease;
+      background: var(--neutral); transition: background 0.25s ease;
     }
 
-    .card:has(select option[value="choice-a"]:checked)::before { background: var(--choice-a); }
-    .card:has(select option[value="choice-b"]:checked)::before { background: var(--choice-b); }
-    .card:has(select option[value="choice-c"]:checked)::before { background: var(--choice-c); }
-    .card:has(select option[value="choice-d"]:checked)::before { background: var(--choice-d); }
+    .card[data-value="choice-a"]::before { background: var(--choice-a); }
+    .card[data-value="choice-b"]::before { background: var(--choice-b); }
+    .card[data-value="choice-c"]::before { background: var(--choice-c); }
+    .card[data-value="choice-d"]::before { background: var(--choice-d); }
 
-    .card:has(select option[value="choice-a"]:checked) { box-shadow: 0 18px 35px rgba(46, 204, 113, 0.16); }
-    .card:has(select option[value="choice-b"]:checked) { box-shadow: 0 18px 35px rgba(168, 217, 74, 0.20); }
-    .card:has(select option[value="choice-c"]:checked) { box-shadow: 0 18px 35px rgba(245, 166, 35, 0.18); }
-    .card:has(select option[value="choice-d"]:checked) { box-shadow: 0 18px 35px rgba(239, 68, 68, 0.18); }
+    .card[data-value="choice-a"] { box-shadow: 0 18px 35px rgba(46,204,113,0.16); }
+    .card[data-value="choice-b"] { box-shadow: 0 18px 35px rgba(168,217,74,0.20); }
+    .card[data-value="choice-c"] { box-shadow: 0 18px 35px rgba(245,166,35,0.18); }
+    .card[data-value="choice-d"] { box-shadow: 0 18px 35px rgba(239,68,68,0.18); }
 
     .card-title { font-size: 16px; color: #9aa5b1; letter-spacing: 0.2px; flex: 1 1 auto; }
 
@@ -114,10 +115,11 @@
       background: linear-gradient(#f4f4f4, #dcdcdc);
       color: #202124; font-size: 14px; font-weight: 700;
       padding: 8px 10px; cursor: pointer;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.18);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.18);
+      transition: opacity 0.2s;
     }
-
     .level-select:hover { background: linear-gradient(#ffffff, #e8e8e8); }
+    .level-select:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .level-select.sel-a { color: #1a7a40; }
     .level-select.sel-b { color: #5a7a00; }
@@ -135,10 +137,10 @@
     }
 
     .legend-item {
-      background: #ffffff; border-radius: 6px; padding: 8px 11px;
-      display: flex; align-items: center; gap: 8px;
+      background: #ffffff; border-radius: 6px; padding: 10px 14px;
+      display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
       color: #334155; font-size: 13px;
-      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
+      box-shadow: 0 8px 18px rgba(15,23,42,0.04);
     }
 
     .dot { width: 15px; height: 15px; border-radius: 4px; display: inline-block; flex-shrink: 0; }
@@ -146,320 +148,174 @@
     .dot.choice-b { background: var(--choice-b); }
     .dot.choice-c { background: var(--choice-c); }
     .dot.choice-d { background: var(--choice-d); }
-    .dot.unknown  { background: var(--neutral);  }
+    .dot.unknown  { background: var(--neutral); }
 
     .disclaimer { position: absolute; left: 44px; bottom: 38px; color: #536476; font-size: 13px; }
 
-    /* ── Intro blurb ───────────────────────────────────────── */
     .intro-box {
       width: min(600px, calc(100vw - 32px));
       margin: 28px auto 0;
-      background: #eef4fb;
-      border: 1px solid #cddcee;
-      border-radius: 14px;
-      padding: 14px 20px;
-      color: #2e4a66;
-      font-size: 14px;
-      line-height: 1.55;
+      background: #eef4fb; border: 1px solid #cddcee;
+      border-radius: 14px; padding: 14px 20px;
+      color: #2e4a66; font-size: 14px; line-height: 1.55;
     }
-    .intro-box strong { color: var(--navy); }
 
-    /* ── Richer legend ─────────────────────────────────────── */
-    .legend-item .legend-desc {
-      font-size: 11px;
-      color: #64748b;
-      margin-top: 1px;
+    .legend-desc { font-size: 11px; color: #64748b; margin-top: 1px; }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 28px; right: 28px;
+      background: #1e293b; color: white;
+      padding: 10px 16px; border-radius: 10px;
+      font-size: 13px; opacity: 0; transform: translateY(8px);
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none; z-index: 999;
     }
-    .legend-item { flex-direction: column; align-items: flex-start; gap: 4px; padding: 10px 14px; }
+    .toast.show { opacity: 1; transform: translateY(0); }
 
+    /* Share / Bookmark */
+    #kcShareBookmark {
+      position: absolute; left: 1cm; top: 118px; z-index: 10;
+    }
+    #kcShareBookmark .kc-bookmark-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: #ffffff; border: 1px solid var(--border);
+      border-radius: 999px; padding: 9px 12px;
+      box-shadow: 0 10px 20px rgba(15,23,42,0.06);
+      color: var(--navy); font-weight: 800; cursor: pointer; user-select: none;
+    }
+    #kcShareBookmark .kc-bookmark-btn:hover {
+      box-shadow: 0 14px 26px rgba(15,23,42,0.10); transform: translateY(-1px);
+    }
+    #kcShareBookmark .kc-bookmark-btn:active { transform: translateY(0); }
+    #kcShareBookmark .kc-bookmark-btn svg {
+      width: 18px; height: 18px; stroke: var(--navy);
+      fill: none; stroke-width: 2;
+    }
+
+    #kcBmOverlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.45);
+      display: none; justify-content: center; align-items: center;
+      padding: 16px; z-index: 100;
+    }
+    #kcBmOverlay.open { display: flex; }
+    #kcBmOverlay .kc-bm-modal {
+      width: min(520px, 92vw); background: #fff;
+      border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,.25); padding: 18px;
+    }
+    #kcBmOverlay .kc-bm-modal h2 { font-size: 16px; margin: 0 0 10px 0; color: var(--navy); }
+    #kcBmOverlay .kc-bm-modal p { margin: 0 0 10px 0; color: #444; font-size: 13px; line-height: 1.35; }
+    #kcBmOverlay .kc-bm-actions {
+      display: flex; gap: 10px; justify-content: flex-end;
+      flex-wrap: wrap; margin-top: 12px;
+    }
+    #kcBmOverlay .kc-bm-btn {
+      appearance: none; border: 1px solid #ddd; background: #fff;
+      border-radius: 12px; padding: 10px 14px; font-weight: 800; cursor: pointer;
+    }
+    #kcBmOverlay .kc-bm-btn.primary { background: #111; color: #fff; border-color: #111; }
+    #kcBmOverlay .kc-bm-tip {
+      margin-top: 10px; padding: 10px; border-radius: 12px;
+      background: #f6f7f9; border: 1px solid #e6e7ea; font-size: 12px; color: #333;
+    }
+    #kcBmOverlay .kc-bm-tip ol { margin: 8px 0 0 18px; padding: 0; }
+    #kcBmOverlay .kc-bm-tip li { margin: 6px 0; }
+
+    /* Sidebar Ads */
+    .sidebar-container {
+      position: fixed; right: 24px; top: 60px;
+      display: flex; flex-direction: column; gap: 14px; z-index: 2;
+    }
+    .sidebar-ad {
+      width: 220px; background: rgba(255,255,255,0.9);
+      border: 1px solid rgba(226,232,240,0.9); border-radius: 16px;
+      padding: 16px; box-shadow: 0 6px 18px rgba(15,23,42,0.05); transition: 0.2s ease;
+    }
+    .sidebar-ad:hover { transform: translateY(-2px); }
+    .ad-tag {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      color: #64748b; margin-bottom: 10px; display: inline-block;
+    }
+    .sidebar-ad h3 { margin: 0 0 8px; font-size: 16px; color: #334155; }
+    .sidebar-ad p  { margin: 0 0 14px; font-size: 13px; color: #64748b; }
+    .ad-btn {
+      display: inline-block; text-decoration: none;
+      background: #eef4fb; color: #003b73;
+      padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    }
+    .ad-btn:hover { background: #dcecff; }
+
+    @media (max-width: 1100px) {
+      .sidebar-container { position: static; width: min(600px, calc(100vw - 32px)); margin: 24px auto 0; }
+      .sidebar-ad { width: 100%; }
+    }
     @media (max-width: 500px) {
       .page { padding: 28px 16px; }
       .header { align-items: flex-start; }
       .levels { margin-top: 40px; }
-      .card {
-        padding: 20px 20px 20px 36px;
-        border-radius: 24px;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 14px;
-        text-align: center;
-      }
+      .card { padding: 20px 20px 20px 36px; border-radius: 24px; flex-direction: column; align-items: stretch; gap: 14px; text-align: center; }
       .level-select { width: 100%; }
       .disclaimer { position: static; margin-top: 35px; }
+      #kcShareBookmark { position: static; margin-top: 12px; align-self: flex-start; }
     }
-
-
-/* Share / Bookmark CTA (scoped to avoid affecting existing page styles) */
-#kcShareBookmark {
-  position: absolute;
-  left: 1cm; /* offset from the left border of the page */
-  top: 118px; /* sits under the “Kate's Corner” heading */
-  z-index: 10;
-}
-
-#kcShareBookmark .kc-bookmark-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  background: #ffffff;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 9px 12px;
-  box-shadow: 0 10px 20px rgba(15, 23, 42, 0.06);
-  color: var(--navy);
-  font-weight: 800;
-  cursor: pointer;
-  user-select: none;
-}
-
-#kcShareBookmark .kc-bookmark-btn:hover {
-  box-shadow: 0 14px 26px rgba(15, 23, 42, 0.10);
-  transform: translateY(-1px);
-}
-
-#kcShareBookmark .kc-bookmark-btn:active {
-  transform: translateY(0);
-}
-
-#kcShareBookmark .kc-bookmark-btn svg {
-  width: 18px;
-  height: 18px;
-  stroke: var(--navy);
-  fill: none;
-  stroke-width: 2;
-}
-
-/* Modal */
-#kcBmOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.45);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  padding: 16px;
-  z-index: 100;
-}
-
-#kcBmOverlay.open { display: flex; }
-
-#kcBmOverlay .kc-bm-modal {
-  width: min(520px, 92vw);
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0,0,0,.25);
-  padding: 18px;
-}
-
-#kcBmOverlay .kc-bm-modal h2 {
-  font-size: 16px;
-  margin: 0 0 10px 0;
-  color: var(--navy);
-}
-
-#kcBmOverlay .kc-bm-modal p {
-  margin: 0 0 10px 0;
-  color: #444;
-  font-size: 13px;
-  line-height: 1.35;
-}
-
-#kcBmOverlay .kc-bm-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-  margin-top: 12px;
-}
-
-#kcBmOverlay .kc-bm-btn {
-  appearance: none;
-  border: 1px solid #ddd;
-  background: #fff;
-  border-radius: 12px;
-  padding: 10px 14px;
-  font-weight: 800;
-  cursor: pointer;
-}
-
-#kcBmOverlay .kc-bm-btn.primary {
-  background: #111;
-  color: #fff;
-  border-color: #111;
-}
-
-#kcBmOverlay .kc-bm-tip {
-  margin-top: 10px;
-  padding: 10px;
-  border-radius: 12px;
-  background: #f6f7f9;
-  border: 1px solid #e6e7ea;
-  font-size: 12px;
-  color: #333;
-}
-
-#kcBmOverlay .kc-bm-tip ol { margin: 8px 0 0 18px; padding: 0; }
-#kcBmOverlay .kc-bm-tip li { margin: 6px 0; }
-
-@media (max-width: 500px) {
-  #kcShareBookmark {
-    position: static;
-    margin-top: 12px;
-    align-self: flex-start;
-  }
-}
-
-/* ── Sidebar Ads ───────────────────────── */
-
-.sidebar-container {
-  position: fixed;
-  right: 24px;
-  top: 60px;
-
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-
-  z-index: 2;
-}
-
-.sidebar-ad {
-  width: 220px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
-  transition: 0.2s ease;
-}
-
-.sidebar-ad:hover {
-  transform: translateY(-2px);
-}
-
-.ad-tag {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: #64748b;
-  margin-bottom: 10px;
-  display: inline-block;
-}
-
-.sidebar-ad h3 {
-  margin: 0 0 8px;
-  font-size: 16px;
-  color: #334155;
-}
-
-.sidebar-ad p {
-  margin: 0 0 14px;
-  font-size: 13px;
-  color: #64748b;
-}
-
-.ad-btn {
-  display: inline-block;
-  text-decoration: none;
-  background: #eef4fb;
-  color: #003b73;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.ad-btn:hover {
-  background: #dcecff;
-}
-
-/* Mobile fallback */
-@media (max-width: 1100px) {
-  .sidebar-container {
-    position: static;
-    width: min(600px, calc(100vw - 32px));
-    margin: 24px auto 0;
-  }
-
-  .sidebar-ad {
-    width: 100%;
-  }
-}
-
-</style>
+  </style>
 </head>
 
 <body>
-<div id="liveDateTime"></div>
+  <div id="liveDateTime"></div>
+
   <main class="page">
     <header class="header">
       <div class="logo">KC</div>
       <div>
         <h1 class="title">Kate's Corner</h1>
         <p class="subtitle">A quick peek at how busy Kate Edger's study rooms are</p>
+        <span class="live-badge">
+          <span class="live-dot offline" id="liveDot"></span>
+          <span id="liveLabel">Connecting…</span>
+        </span>
       </div>
     </header>
 
-<div id="kcShareBookmark">
-  <button class="kc-bookmark-btn" id="kcShareBookmarkBtn" type="button" aria-label="Share / Bookmark this page">
-    <!-- Bookmark/star icon -->
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M12 3.2l2.6 5.4 6 .9-4.3 4.2 1 5.9L12 16.9 6.7 19.6l1-5.9L3.4 9.5l6-.9L12 3.2z"/>
-    </svg>
-    <span>Share / Bookmark this page</span>
-  </button>
-</div>
-
-<!-- Share/Bookmark helper modal -->
-<div id="kcBmOverlay" role="dialog" aria-modal="true" aria-labelledby="kcBmTitle">
-  <div class="kc-bm-modal">
-    <h2 id="kcBmTitle">Share / Bookmark this page</h2>
-    <p id="kcBmStatus">Browsers usually don’t allow websites to create bookmarks automatically. This button will try the best available option, then show quick steps.</p>
-
-    <div class="kc-bm-actions">
-      <button class="kc-bm-btn" id="kcBmCloseBtn" type="button">Close</button>
-      <button class="kc-bm-btn" id="kcBmCopyBtn" type="button">Copy link</button>
-      <button class="kc-bm-btn primary" id="kcBmShareBtn" type="button">Share</button>
+    <div id="kcShareBookmark">
+      <button class="kc-bookmark-btn" id="kcShareBookmarkBtn" type="button" aria-label="Share / Bookmark this page">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M12 3.2l2.6 5.4 6 .9-4.3 4.2 1 5.9L12 16.9 6.7 19.6l1-5.9L3.4 9.5l6-.9L12 3.2z"/>
+        </svg>
+        <span>Share / Bookmark this page</span>
+      </button>
     </div>
 
-    <div class="kc-bm-tip" id="kcBmTip" style="display:none;"></div>
-  </div>
-</div>
+    <div id="kcBmOverlay" role="dialog" aria-modal="true" aria-labelledby="kcBmTitle">
+      <div class="kc-bm-modal">
+        <h2 id="kcBmTitle">Share / Bookmark this page</h2>
+        <p id="kcBmStatus">Browsers usually don't allow websites to create bookmarks automatically. This button will try the best available option, then show quick steps.</p>
+        <div class="kc-bm-actions">
+          <button class="kc-bm-btn" id="kcBmCloseBtn" type="button">Close</button>
+          <button class="kc-bm-btn" id="kcBmCopyBtn" type="button">Copy link</button>
+          <button class="kc-bm-btn primary" id="kcBmShareBtn" type="button">Share</button>
+        </div>
+        <div class="kc-bm-tip" id="kcBmTip" style="display:none;"></div>
+      </div>
+    </div>
 
-
-    <!-- ── Intro blurb ── -->
     <div class="intro-box">
-
-<div style="
-text-align:center;
-font-size:16px;
-font-weight:800;
-line-height:1.5;
-color:#003b73;
-margin-bottom:10px;
-">
-Find a seat. Share a status. Help the next student.
-</div>
-
-<div style="
-text-align:center;
-font-size:15px;
-line-height:1.8;
-color:#425466;
-">
-Check how busy each study space is before you go,
-or update the status based on what you see.
-Small updates from students help keep
-<strong>Kate’s Corner</strong> useful and accurate for everyone.
-</div>
-
-</div>
+      <div style="text-align:center;font-size:16px;font-weight:800;line-height:1.5;color:#003b73;margin-bottom:10px;">
+        Find a seat. Share a status. Help the next student.
+      </div>
+      <div style="text-align:center;font-size:15px;line-height:1.8;color:#425466;">
+        Check how busy each study space is before you go,
+        or update the status based on what you see.
+        Small updates from students help keep
+        <strong>Kate's Corner</strong> useful and accurate for everyone.
+      </div>
+    </div>
 
     <section class="levels">
 
-      <div class="card">
+      <div class="card" id="card-level0" data-value="">
         <span class="card-title">Level 0 – Collaborative Study Space</span>
-        <select class="level-select" aria-label="Level 0 availability">
+        <select class="level-select" data-key="level0" aria-label="Level 0 availability" disabled>
           <option value="">How busy is it?</option>
           <option value="choice-a">Empty – Very easy to find seats</option>
           <option value="choice-b">Moderate – Quite easy to find seats</option>
@@ -467,13 +323,11 @@ Small updates from students help keep
           <option value="choice-d">Full – Basically no seats left</option>
         </select>
       </div>
-</div> <!-- end of card -->
+      <div class="level-update" id="update-level0">Last updated: --</div>
 
-<div class="level-update">Last updated: --</div>
-
-      <div class="card">
+      <div class="card" id="card-level2" data-value="">
         <span class="card-title">Level 2 – Collaborative Study Space</span>
-        <select class="level-select" aria-label="Level 2 availability">
+        <select class="level-select" data-key="level2" aria-label="Level 2 availability" disabled>
           <option value="">How busy is it?</option>
           <option value="choice-a">Empty – Very easy to find seats</option>
           <option value="choice-b">Moderate – Quite easy to find seats</option>
@@ -481,13 +335,11 @@ Small updates from students help keep
           <option value="choice-d">Full – Basically no seats left</option>
         </select>
       </div>
-</div> <!-- end of card -->
+      <div class="level-update" id="update-level2">Last updated: --</div>
 
-<div class="level-update">Last updated: --</div>
-
-      <div class="card">
+      <div class="card" id="card-level3" data-value="">
         <span class="card-title">Level 3 – Quiet Study Space</span>
-        <select class="level-select" aria-label="Level 3 availability">
+        <select class="level-select" data-key="level3" aria-label="Level 3 availability" disabled>
           <option value="">How busy is it?</option>
           <option value="choice-a">Empty – Very easy to find seats</option>
           <option value="choice-b">Moderate – Quite easy to find seats</option>
@@ -495,13 +347,11 @@ Small updates from students help keep
           <option value="choice-d">Full – Basically no seats left</option>
         </select>
       </div>
-</div> <!-- end of card -->
+      <div class="level-update" id="update-level3">Last updated: --</div>
 
-<div class="level-update">Last updated: --</div>
-
-      <div class="card">
+      <div class="card" id="card-level4" data-value="">
         <span class="card-title">Level 4 – Silent Study Space</span>
-        <select class="level-select" aria-label="Level 4 availability">
+        <select class="level-select" data-key="level4" aria-label="Level 4 availability" disabled>
           <option value="">How busy is it?</option>
           <option value="choice-a">Empty – Very easy to find seats</option>
           <option value="choice-b">Moderate – Quite easy to find seats</option>
@@ -509,9 +359,7 @@ Small updates from students help keep
           <option value="choice-d">Full – Basically no seats left</option>
         </select>
       </div>
-</div> <!-- end of card -->
-
-<div class="level-update">Last updated: --</div>
+      <div class="level-update" id="update-level4">Last updated: --</div>
 
     </section>
 
@@ -541,211 +389,182 @@ Small updates from students help keep
     <p class="disclaimer">Status updates are approximate.</p>
   </main>
 
+  <!-- Sidebar Ads -->
+  <div class="sidebar-container">
+    <div class="sidebar-ad">
+      <span class="ad-tag">Sponsored</span>
+      <h3>Campus Café ☕</h3>
+      <p>Student coffee specials and quiet seating available throughout the week.</p>
+      <a href="#" class="ad-btn">View Offer</a>
+    </div>
+    <div class="sidebar-ad">
+      <span class="ad-tag">Sponsored</span>
+      <h3>University Bookstore 📚</h3>
+      <p>Discounts on stationery, notebooks, and selected course materials.</p>
+      <a href="#" class="ad-btn">Browse Deals</a>
+    </div>
+    <div class="sidebar-ad">
+      <span class="ad-tag">Sponsored</span>
+      <h3>Campus Eats 🍔</h3>
+      <p>Discover nearby restaurants with student deals, takeaway options, and late-night meals.</p>
+      <a href="#" class="ad-btn">Explore Food</a>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- Live clock -->
   <script>
-    const colourMap = {
-      'choice-a': 'sel-a',
-      'choice-b': 'sel-b',
-      'choice-c': 'sel-c',
-      'choice-d': 'sel-d',
+    function updateDateTime() {
+      document.getElementById("liveDateTime").textContent =
+        new Date().toLocaleDateString() + " | " +
+        new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    }
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
+  </script>
+
+  <!-- Share / Bookmark modal -->
+  <script>
+    (function(){
+      const btn = document.getElementById('kcShareBookmarkBtn');
+      const overlay = document.getElementById('kcBmOverlay');
+      const closeBtn = document.getElementById('kcBmCloseBtn');
+      const copyBtn = document.getElementById('kcBmCopyBtn');
+      const shareBtn = document.getElementById('kcBmShareBtn');
+      const tipBox = document.getElementById('kcBmTip');
+      const statusLine = document.getElementById('kcBmStatus');
+      if (!btn || !overlay) return;
+      const pageUrl = window.location.href;
+      const pageTitle = document.title || "Kate's Corner";
+      function openModal(){ overlay.classList.add('open'); }
+      function closeModal(){
+        overlay.classList.remove('open');
+        tipBox.style.display = 'none'; tipBox.innerHTML = '';
+        statusLine.textContent = "Browsers usually don't allow websites to create bookmarks automatically.";
+      }
+      function showTips(){
+        const ua = navigator.userAgent || '';
+        const isIOS = /iPhone|iPad|iPod/i.test(ua);
+        const isAndroid = /Android/i.test(ua);
+        const isMac = /Macintosh|Mac OS X/i.test(ua);
+        let html = '<ol>';
+        if (isIOS) {
+          html += '<li>Open in <b>Safari</b>.</li><li>Tap <b>Share</b> then <b>Add Bookmark</b>.</li>';
+        } else if (isAndroid) {
+          html += '<li>Open the browser menu (⋮).</li><li>Tap the <b>Star / Bookmark</b> option.</li>';
+        } else {
+          html += `<li>Press <b>${isMac ? '⌘ Cmd' : 'Ctrl'} + D</b> to bookmark.</li>`;
+        }
+        html += '</ol><div style="margin-top:8px;"><b>Link:</b> ' + pageUrl + '</div>';
+        tipBox.innerHTML = html; tipBox.style.display = 'block';
+      }
+      async function doShare(){
+        if (!navigator.share) return false;
+        try { await navigator.share({ title: pageTitle, url: pageUrl }); return true; } catch(_){ return false; }
+      }
+      async function copyLink(){
+        try {
+          if (navigator.clipboard && window.isSecureContext) await navigator.clipboard.writeText(pageUrl);
+          else window.prompt('Copy this link:', pageUrl);
+          statusLine.textContent = 'Link copied!';
+        } catch(_){ window.prompt('Copy this link:', pageUrl); }
+      }
+      btn.addEventListener('click', async () => { openModal(); showTips(); await doShare(); });
+      closeBtn.addEventListener('click', closeModal);
+      copyBtn.addEventListener('click', copyLink);
+      shareBtn.addEventListener('click', doShare);
+      overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal(); });
+    })();
+  </script>
+
+  <!-- Firebase real-time sync -->
+  <script type="module">
+    import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey:            "AIzaSyA9JJLRflZghT5y0To_lc384iOARQNnzfw",
+      authDomain:        "kates-corner-d1d82.firebaseapp.com",
+      databaseURL:       "https://kates-corner-d1d82-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId:         "kates-corner-d1d82",
+      storageBucket:     "kates-corner-d1d82.firebasestorage.app",
+      messagingSenderId: "856271823905",
+      appId:             "1:856271823905:web:71eeea2c855c954e91af60",
+      measurementId:     "G-5SN58F3Z56"
     };
 
-    document.querySelectorAll('.level-select').forEach(select => {
-      function updateColour() {
-        Object.values(colourMap).forEach(cls => select.classList.remove(cls));
-        const cls = colourMap[select.value];
-        if (cls) select.classList.add(cls);
-      }
-      select.addEventListener('change', updateColour);
-      updateColour();
+    const app = initializeApp(firebaseConfig);
+    const db  = getDatabase(app);
+
+    const LEVELS    = ["level0", "level2", "level3", "level4"];
+    const colourMap = { 'choice-a':'sel-a', 'choice-b':'sel-b', 'choice-c':'sel-c', 'choice-d':'sel-d' };
+
+    // Toast
+    const toast = document.getElementById("toast");
+    let toastTimer;
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 2500);
+    }
+
+    // Format ISO timestamp → "DD/MM/YYYY at HH:MM"
+    function formatTime(iso) {
+      if (!iso) return "--";
+      const d = new Date(iso);
+      return d.toLocaleDateString() + " at " + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // Apply a value + timestamp to the UI for one level
+    function applyToUI(key, value, updatedAt) {
+      const card   = document.getElementById(`card-${key}`);
+      const select = card.querySelector("select");
+      const label  = document.getElementById(`update-${key}`);
+
+      card.dataset.value = value || "";
+      select.value = value || "";
+
+      Object.values(colourMap).forEach(c => select.classList.remove(c));
+      if (value && colourMap[value]) select.classList.add(colourMap[value]);
+
+      if (label) label.textContent = "Last updated: " + (updatedAt ? formatTime(updatedAt) : "--");
+    }
+
+    // Listen for changes from Firebase — fires for ALL connected clients instantly
+    onValue(ref(db, "kates-corner/levels"), (snapshot) => {
+      document.getElementById("liveDot").classList.remove("offline");
+      document.getElementById("liveLabel").textContent = "Live";
+      document.querySelectorAll(".level-select").forEach(s => s.disabled = false);
+
+      const data = snapshot.val() || {};
+      LEVELS.forEach(key => {
+        const entry = data[key] || {};
+        applyToUI(key, entry.value || "", entry.updatedAt || null);
+      });
+    }, (err) => {
+      document.getElementById("liveDot").classList.add("offline");
+      document.getElementById("liveLabel").textContent = "Offline";
+      console.error("Firebase error:", err);
+    });
+
+    // Write to Firebase when a user changes a dropdown
+    document.querySelectorAll(".level-select").forEach(select => {
+      select.addEventListener("change", () => {
+        const key   = select.dataset.key;
+        const value = select.value;
+        const now   = new Date().toISOString();
+
+        applyToUI(key, value, now); // instant local update
+
+        set(ref(db, `kates-corner/levels/${key}`), { value: value || null, updatedAt: now })
+          .then(() => showToast("✓ Saved & synced for everyone"))
+          .catch(() => showToast("⚠ Save failed – check connection"));
+      });
     });
   </script>
 
-
-<script>
-(function(){
-  const btn = document.getElementById('kcShareBookmarkBtn');
-  const overlay = document.getElementById('kcBmOverlay');
-  const closeBtn = document.getElementById('kcBmCloseBtn');
-  const copyBtn = document.getElementById('kcBmCopyBtn');
-  const shareBtn = document.getElementById('kcBmShareBtn');
-  const tipBox = document.getElementById('kcBmTip');
-  const statusLine = document.getElementById('kcBmStatus');
-
-  if (!btn || !overlay) return;
-
-  const pageUrl = window.location.href;
-  const pageTitle = document.title || "Kate's Corner";
-
-  function openModal(){ overlay.classList.add('open'); }
-  function closeModal(){
-    overlay.classList.remove('open');
-    tipBox.style.display = 'none';
-    tipBox.innerHTML = '';
-    statusLine.textContent = "Browsers usually don’t allow websites to create bookmarks automatically. This button will try the best available option, then show quick steps.";
-  }
-
-  function showTips(){
-    const ua = navigator.userAgent || '';
-    const isIOS = /iPhone|iPad|iPod/i.test(ua);
-    const isAndroid = /Android/i.test(ua);
-    const isMac = /Macintosh|Mac OS X/i.test(ua);
-
-    let html = '<ol>';
-    if (isIOS) {
-      html += '<li>Open in <b>Safari</b>.</li>';
-      html += '<li>Tap <b>Share</b> (square with an up arrow).</li>';
-      html += '<li>Select <b>Add Bookmark</b> (or add to Reading List).</li>';
-    } else if (isAndroid) {
-      html += '<li>Open the browser menu (⋮).</li>';
-      html += '<li>Tap the <b>Star</b> / <b>Bookmark</b> option.</li>';
-    } else {
-      html += `<li>Press <b>${isMac ? '⌘ Cmd' : 'Ctrl'} + D</b> to bookmark this page.</li>`;
-      html += '<li>Or use your browser’s star/bookmark icon in the address bar.</li>';
-    }
-    html += '</ol>';
-    html += '<div style="margin-top:8px;"><b>Link:</b> ' + pageUrl + '</div>';
-
-    tipBox.innerHTML = html;
-    tipBox.style.display = 'block';
-  }
-
-  function tryLegacyBookmark(url, title){
-    try {
-      if (window.sidebar && window.sidebar.addPanel) { window.sidebar.addPanel(title, url, ''); return true; }
-      if (window.external && ('AddFavorite' in window.external)) { window.external.AddFavorite(url, title); return true; }
-    } catch (_) {}
-    return false;
-  }
-
-  async function doShare(){
-    if (!navigator.share) return false;
-    try { await navigator.share({ title: pageTitle, url: pageUrl }); return true; } catch (_) { return false; }
-  }
-
-  async function copyLink(){
-    try {
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(pageUrl);
-      } else {
-        window.prompt('Copy this link:', pageUrl);
-      }
-      statusLine.textContent = 'Link copied. You can paste it wherever you like.';
-    } catch (_) {
-      window.prompt('Copy this link:', pageUrl);
-    }
-  }
-
-  btn.addEventListener('click', async () => {
-    const legacyWorked = tryLegacyBookmark(pageUrl, pageTitle);
-    const shared = legacyWorked ? false : await doShare();
-
-    openModal();
-    if (legacyWorked) {
-      statusLine.textContent = 'If supported by your browser, a bookmark dialog should have opened.';
-    } else if (shared) {
-      statusLine.textContent = 'Share opened. If you don’t see a bookmark option, use the steps below.';
-    } else {
-      statusLine.textContent = 'Your browser won’t allow automatic bookmarking from a webpage. Use the steps below.';
-    }
-    showTips();
-  });
-
-  closeBtn.addEventListener('click', closeModal);
-  copyBtn.addEventListener('click', copyLink);
-  shareBtn.addEventListener('click', doShare);
-
-  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal(); });
-})();
-function updateDateTime() {
-  const now = new Date();
-
-  const date = now.toLocaleDateString();
-  const time = now.toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit'
-  });
-
-  document.getElementById("liveDateTime").textContent =
-    date + " | " + time;
-}
-
-// update immediately + every second
-updateDateTime();
-setInterval(updateDateTime, 1000);
-function getFormattedTime() {
-  const now = new Date();
-
-  return now.toLocaleDateString() + " at " +
-         now.toLocaleTimeString([], {
-           hour: '2-digit',
-           minute: '2-digit'
-         });
-}
-
-document.querySelectorAll('.level-select').forEach(select => {
-
-  select.addEventListener('change', () => {
-
-    const card = select.closest('.card');
-
-    let updateLabel = card.nextElementSibling;
-
-// keep moving down until we find the correct line
-while (updateLabel && !updateLabel.classList.contains('level-update')) {
-  updateLabel = updateLabel.nextElementSibling;
-}
-
-if (updateLabel) {
-  updateLabel.textContent = "Last updated: " + getFormattedTime();
-}
-``
-
-    if (updateLabel && updateLabel.classList.contains('level-update')) {
-      updateLabel.textContent = "Last updated: " + getFormattedTime();
-    }
-
-  });
-
-});
-</script>
 </body>
-
-<!-- Sidebar Ads -->
-<div class="sidebar-container">
-
-  <div class="sidebar-ad">
-    <span class="ad-tag">Sponsored</span>
-    <h3>Campus Café ☕</h3>
-    <p>
-      Student coffee specials and quiet seating available
-      throughout the week.
-    </p>
-    <a href="#" class="ad-btn">View Offer</a>
-  </div>
-
-  <div class="sidebar-ad">
-    <span class="ad-tag">Sponsored</span>
-    <h3>University Bookstore 📚</h3>
-    <p>
-      Discounts on stationery, notebooks, and selected
-      course materials.
-    </p>
-    <a href="#" class="ad-btn">Browse Deals</a>
-  </div>
-
-  <div class="sidebar-ad">
-    <span class="ad-tag">Sponsored</span>
-    <h3>Campus Eats 🍔</h3>
-    <p>
-      Discover nearby restaurants with student deals,
-      takeaway options, and late-night meals.
-    </p>
-    <a href="#" class="ad-btn">Explore Food</a>
-  </div>
-
-</div>
-``
-
 </html>
