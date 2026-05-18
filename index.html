@@ -150,6 +150,28 @@
 
     .disclaimer { position: absolute; left: 44px; bottom: 38px; color: #536476; font-size: 13px; }
 
+    /* ── Intro blurb ───────────────────────────────────────── */
+    .intro-box {
+      width: min(600px, calc(100vw - 32px));
+      margin: 28px auto 0;
+      background: #eef4fb;
+      border: 1px solid #cddcee;
+      border-radius: 14px;
+      padding: 14px 20px;
+      color: #2e4a66;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    .intro-box strong { color: var(--navy); }
+
+    /* ── Richer legend ─────────────────────────────────────── */
+    .legend-item .legend-desc {
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 1px;
+    }
+    .legend-item { flex-direction: column; align-items: flex-start; gap: 4px; padding: 10px 14px; }
+
     @media (max-width: 500px) {
       .page { padding: 28px 16px; }
       .header { align-items: flex-start; }
@@ -328,6 +350,34 @@
 </div>
 
 
+    <!-- ── Intro blurb ── -->
+    <div class="intro-box">
+
+<div style="
+text-align:center;
+font-size:16px;
+font-weight:800;
+line-height:1.5;
+color:#003b73;
+margin-bottom:10px;
+">
+Find a seat. Share a status. Help the next student.
+</div>
+
+<div style="
+text-align:center;
+font-size:15px;
+line-height:1.8;
+color:#425466;
+">
+Check how busy each study space is before you go,
+or update the status based on what you see.
+Small updates from students help keep
+<strong>Kate’s Corner</strong> useful and accurate for everyone.
+</div>
+
+</div>
+
     <section class="levels">
 
       <div class="card">
@@ -389,11 +439,26 @@
     </section>
 
     <div class="legend">
-      <div class="legend-item"><span class="dot choice-a"></span>Empty</div>
-      <div class="legend-item"><span class="dot choice-b"></span>Moderate</div>
-      <div class="legend-item"><span class="dot choice-c"></span>Limited</div>
-      <div class="legend-item"><span class="dot choice-d"></span>Full</div>
-      <div class="legend-item"><span class="dot unknown"></span>Unknown</div>
+      <div class="legend-item">
+        <div style="display:flex;align-items:center;gap:8px;"><span class="dot choice-a"></span><strong>Empty</strong></div>
+        <div class="legend-desc">Plenty of seats — go right up</div>
+      </div>
+      <div class="legend-item">
+        <div style="display:flex;align-items:center;gap:8px;"><span class="dot choice-b"></span><strong>Moderate</strong></div>
+        <div class="legend-desc">Some seats available</div>
+      </div>
+      <div class="legend-item">
+        <div style="display:flex;align-items:center;gap:8px;"><span class="dot choice-c"></span><strong>Limited</strong></div>
+        <div class="legend-desc">Getting full — consider another floor</div>
+      </div>
+      <div class="legend-item">
+        <div style="display:flex;align-items:center;gap:8px;"><span class="dot choice-d"></span><strong>Full</strong></div>
+        <div class="legend-desc">No seats left — try elsewhere</div>
+      </div>
+      <div class="legend-item">
+        <div style="display:flex;align-items:center;gap:8px;"><span class="dot unknown"></span><strong>Unknown</strong></div>
+        <div class="legend-desc">Status not yet reported</div>
+      </div>
     </div>
 
     <p class="disclaimer">Status updates are approximate.</p>
