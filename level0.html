@@ -30,6 +30,31 @@
       background: var(--page-bg);
       color: var(--text);
     }
+    .back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  color: #003b73; /* Matches var(--navy) */
+  background: #eef4fb;
+  padding: 8px 16px;
+  border-radius: 999px; /* Rounded pill style */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  margin-bottom: 20px; /* Gives space below the button */
+}
+
+.back-btn:hover {
+  background: #dcecff;
+  transform: translateX(-2px); /* Subtle shift to the left on hover */
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+.back-btn svg {
+  fill: #003b73; /* Matches the text color */
+}
 
     .page {
       min-height: 100vh;
@@ -210,6 +235,10 @@
 
 <body>
   <main class="page">
+    <a href="index.html" class="back-btn">
+    <svg viewBox="0 0 24 24" width="16" height="16"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
+      Back to Statuses
+    </a>
     <header class="header">
       <div class="logo">KC</div>
       <div>
