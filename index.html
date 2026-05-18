@@ -77,7 +77,6 @@
     .card-info { display: flex; flex-direction: column; gap: 8px; flex: 1 1 auto; }
     .card-title { font-size: 16px; color: #24384d; font-weight: 600; letter-spacing: 0.2px; }
     
-    /* Update Status Button styling */
     .update-btn {
       align-self: flex-start;
       font-size: 12px; font-weight: 700; color: var(--navy);
@@ -87,7 +86,6 @@
     }
     .update-btn:hover { background: #dcecff; transform: translateY(-1px); }
 
-    /* Status badge (replaces dropdown) */
     .status-badge {
       flex: 0 0 auto;
       padding: 8px 16px; border-radius: 20px;
@@ -129,7 +127,6 @@
 
     .disclaimer { position: absolute; left: 44px; bottom: 38px; color: #536476; font-size: 13px; }
 
-    /* Share / Bookmark */
     #kcShareBookmark { position: absolute; left: 1cm; top: 118px; z-index: 10; }
     #kcShareBookmark .kc-bookmark-btn {
       display: inline-flex; align-items: center; gap: 10px;
@@ -151,7 +148,6 @@
     #kcBmOverlay .kc-bm-tip ol { margin: 8px 0 0 18px; padding: 0; }
     #kcBmOverlay .kc-bm-tip li { margin: 6px 0; }
 
-    /* Sidebar Ads */
     .sidebar-container { position: fixed; right: 24px; top: 60px; display: flex; flex-direction: column; gap: 14px; z-index: 2; }
     .sidebar-ad { width: 220px; background: rgba(255,255,255,0.9); border: 1px solid rgba(226,232,240,0.9); border-radius: 16px; padding: 16px; box-shadow: 0 6px 18px rgba(15,23,42,0.05); transition: 0.2s ease; }
     .sidebar-ad:hover { transform: translateY(-2px); }
@@ -221,11 +217,10 @@
     </div>
 
     <section class="levels">
-
       <div class="card" id="card-level0" data-value="">
         <div class="card-info">
           <span class="card-title">Level 0 – Collaborative Study Space</span>
-          <a href="https://kaliyana-h.github.io/KatesCorner/level0.html" class="update-btn">Update Status</a>
+          <a href="level0.html" class="update-btn">Update Status</a>
         </div>
         <span class="status-badge unknown" id="badge-level0">Unknown</span>
       </div>
@@ -234,7 +229,7 @@
       <div class="card" id="card-level2" data-value="">
         <div class="card-info">
           <span class="card-title">Level 2 – Collaborative Study Space</span>
-          <a href="https://kaliyana-h.github.io/KatesCorner/level2.html" class="update-btn">Update Status</a>
+          <a href="level2.html" class="update-btn">Update Status</a>
         </div>
         <span class="status-badge unknown" id="badge-level2">Unknown</span>
       </div>
@@ -243,7 +238,7 @@
       <div class="card" id="card-level3" data-value="">
         <div class="card-info">
           <span class="card-title">Level 3 – Quiet Study Space</span>
-          <a href="https://kaliyana-h.github.io/KatesCorner/level3.html" class="update-btn">Update Status</a>
+          <a href="level3.html" class="update-btn">Update Status</a>
         </div>
         <span class="status-badge unknown" id="badge-level3">Unknown</span>
       </div>
@@ -252,63 +247,31 @@
       <div class="card" id="card-level4" data-value="">
         <div class="card-info">
           <span class="card-title">Level 4 – Silent Study Space</span>
-          <a href="https://kaliyana-h.github.io/KatesCorner/level4.html" class="update-btn">Update Status</a>
+          <a href="level4.html" class="update-btn">Update Status</a>
         </div>
         <span class="status-badge unknown" id="badge-level4">Unknown</span>
       </div>
       <div class="level-update" id="update-level4">Last updated: --</div>
-
     </section>
 
     <div class="legend">
-      <div class="legend-item">
-        <div style="display:flex;align-items:center;gap:8px;"><span class="dot choice-a"></span><strong>Empty</strong></div>
-        <div class="legend-desc">Plenty of seats — go right up</div>
-      </div>
-      <div class="legend-item">
-        <div style="display:flex;align-items:center;gap:8px;"><span class="dot choice-b"></span><strong>Moderate</strong></div>
-        <div class="legend-desc">Some seats available</div>
-      </div>
-      <div class="legend-item">
-        <div style="display:flex;align-items:center;gap:8px;"><span class="dot choice-c"></span><strong>Limited</strong></div>
-        <div class="legend-desc">Getting full — consider another floor</div>
-      </div>
-      <div class="legend-item">
-        <div style="display:flex;align-items:center;gap:8px;"><span class="dot choice-d"></span><strong>Full</strong></div>
-        <div class="legend-desc">No seats left — try elsewhere</div>
-      </div>
-      <div class="legend-item">
-        <div style="display:flex;align-items:center;gap:8px;"><span class="dot unknown"></span><strong>Unknown</strong></div>
-        <div class="legend-desc">Status not yet reported</div>
-      </div>
+      <div class="legend-item"><div style="display:flex;align-items:center;gap:8px;"><span class="dot choice-a"></span><strong>Empty</strong></div><div class="legend-desc">Plenty of seats — go right up</div></div>
+      <div class="legend-item"><div style="display:flex;align-items:center;gap:8px;"><span class="dot choice-b"></span><strong>Moderate</strong></div><div class="legend-desc">Some seats available</div></div>
+      <div class="legend-item"><div style="display:flex;align-items:center;gap:8px;"><span class="dot choice-c"></span><strong>Limited</strong></div><div class="legend-desc">Getting full — consider another floor</div></div>
+      <div class="legend-item"><div style="display:flex;align-items:center;gap:8px;"><span class="dot choice-d"></span><strong>Full</strong></div><div class="legend-desc">No seats left — try elsewhere</div></div>
+      <div class="legend-item"><div style="display:flex;align-items:center;gap:8px;"><span class="dot unknown"></span><strong>Unknown</strong></div><div class="legend-desc">Status not yet confirmed</div></div>
     </div>
 
     <p class="disclaimer">Status updates are approximate and submitted by students.</p>
   </main>
 
   <div class="sidebar-container">
-    <div class="sidebar-ad">
-      <span class="ad-tag">Sponsored</span>
-      <h3>Campus Café ☕</h3>
-      <p>Student coffee specials and quiet seating throughout the week.</p>
-      <a href="#" class="ad-btn">View Offer</a>
-    </div>
-    <div class="sidebar-ad">
-      <span class="ad-tag">Sponsored</span>
-      <h3>University Bookstore 📚</h3>
-      <p>Discounts on stationery, notebooks, and selected course materials.</p>
-      <a href="#" class="ad-btn">Browse Deals</a>
-    </div>
-    <div class="sidebar-ad">
-      <span class="ad-tag">Sponsored</span>
-      <h3>Campus Eats 🍔</h3>
-      <p>Nearby restaurants with student deals and late-night meals.</p>
-      <a href="#" class="ad-btn">Explore Food</a>
-    </div>
+    <div class="sidebar-ad"><span class="ad-tag">Sponsored</span><h3>Campus Café ☕</h3><p>Student coffee specials and quiet seating throughout the week.</p><a href="#" class="ad-btn">View Offer</a></div>
+    <div class="sidebar-ad"><span class="ad-tag">Sponsored</span><h3>University Bookstore 📚</h3><p>Discounts on stationery, notebooks, and selected course materials.</p><a href="#" class="ad-btn">Browse Deals</a></div>
+    <div class="sidebar-ad"><span class="ad-tag">Sponsored</span><h3>Campus Eats 🍔</h3><p>Nearby restaurants with student deals and late-night meals.</p><a href="#" class="ad-btn">Explore Food</a></div>
   </div>
 
   <script>
-    // Clock
     function updateDateTime() {
       document.getElementById("liveDateTime").textContent =
         new Date().toLocaleDateString() + " | " +
@@ -316,7 +279,6 @@
     }
     updateDateTime(); setInterval(updateDateTime, 1000);
 
-    // Share modal
     (function(){
       const btn = document.getElementById('kcShareBookmarkBtn');
       const overlay = document.getElementById('kcBmOverlay');
@@ -350,180 +312,98 @@
     })();
   </script>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-  const firebaseConfig = {
-    apiKey:            "AIzaSyA9JJLRflZghT5y0To_lc384iOARQNnzfw",
-    authDomain:        "kates-corner-d1d82.firebaseapp.com",
-    databaseURL:       "https://kates-corner-d1d82-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId:         "kates-corner-d1d82",
-    storageBucket:     "kates-corner-d1d82.firebasestorage.app",
-    messagingSenderId: "856271823905",
-    appId:             "1:856271823905:web:71eeea2c855c954e91af60",
-    measurementId:     "G-5SN58F3Z56"
-  };
+    const firebaseConfig = {
+      apiKey:            "AIzaSyA9JJLRflZghT5y0To_lc384iOARQNnzfw",
+      authDomain:        "kates-corner-d1d82.firebaseapp.com",
+      databaseURL:       "https://kates-corner-d1d82-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId:         "kates-corner-d1d82",
+      storageBucket:     "kates-corner-d1d82.firebasestorage.app",
+      messagingSenderId: "856271823905",
+      appId:             "1:856271823905:web:71eeea2c855c954e91af60",
+      measurementId:     "G-5SN58F3Z56"
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
+    const db = getDatabase(initializeApp(firebaseConfig));
+    const LEVELS = ["level0","level2","level3","level4"];
+    const LABELS = { 'choice-a': 'Empty', 'choice-b': 'Moderate', 'choice-c': 'Limited', 'choice-d': 'Full' };
 
-  const LEVELS = ["level0","level2","level3","level4"];
+    function formatTime(iso) {
+      if (!iso) return "--";
+      const d = new Date(iso);
+      return d.toLocaleDateString() + " at " + d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    }
 
-  const LABELS = {
-    'choice-a': 'Empty',
-    'choice-b': 'Moderate',
-    'choice-c': 'Limited',
-    'choice-d': 'Full'
-  };
-
-  // =========================
-  // Confirmation Settings
-  // =========================
-  const MIN_UPDATES = 3;
-  const THRESHOLD = 0.6;
-
-  // Stores recent updates locally
-  const recentUpdates = {
-    level0: [],
-    level2: [],
-    level3: [],
-    level4: []
-  };
-
-  // Stores confirmed status
-  const confirmedStatus = {
-    level0: null,
-    level2: null,
-    level3: null,
-    level4: null
-  };
-
-  function formatTime(iso) {
-    if (!iso) return "--";
-
-    const d = new Date(iso);
-
-    return d.toLocaleDateString() + " at " +
-      d.toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit'
+    // Process rolling history node logic cleanly
+    function calculateConsensus(historyArray) {
+      if (!historyArray || historyArray.length < 3) return null;
+      
+      // Grab the absolute last 3 submissions made
+      const sample = historyArray.slice(-3);
+      const counts = {};
+      
+      sample.forEach(item => {
+        if(item.value) counts[item.value] = (counts[item.value] || 0) + 1;
       });
-  }
 
-  function getConfirmedStatus(level) {
+      let topChoice = null;
+      let topCount = 0;
+      Object.keys(counts).forEach(key => {
+        if (counts[key] > topCount) {
+          topChoice = key;
+          topCount = counts[key];
+        }
+      });
 
-    const updates = recentUpdates[level].slice(-MIN_UPDATES);
-
-    if (updates.length < MIN_UPDATES) {
+      // Confirm status if confidence is at least 60% (2 out of 3 matches minimum)
+      if ((topCount / 3) >= 0.6) {
+        return topChoice;
+      }
       return null;
     }
 
-    const counts = {};
+    function applyToUI(key, value, updatedAt) {
+      const card  = document.getElementById(`card-${key}`);
+      const badge = document.getElementById(`badge-${key}`);
+      const label = document.getElementById(`update-${key}`);
 
-    updates.forEach(value => {
-      counts[value] = (counts[value] || 0) + 1;
-    });
+      card.dataset.value = value || "";
+      badge.className = "status-badge";
 
-    let strongest = null;
-    let strongestCount = 0;
-
-    Object.keys(counts).forEach(key => {
-      if (counts[key] > strongestCount) {
-        strongest = key;
-        strongestCount = counts[key];
+      if (value && LABELS[value]) {
+        badge.classList.add(value);
+        badge.textContent = LABELS[value];
+      } else {
+        badge.classList.add("unknown");
+        badge.textContent = "Unknown";
       }
-    });
-
-    const confidence = strongestCount / updates.length;
-
-    if (confidence >= THRESHOLD) {
-      return strongest;
+      if (label) label.textContent = "Last updated: " + (updatedAt ? formatTime(updatedAt) : "--");
     }
 
-    return null;
-  }
+    // Listen to the live, multi-node log trail entries
+    onValue(ref(db, "kates-corner/history"), (snapshot) => {
+      document.getElementById("liveDot").classList.remove("offline");
+      document.getElementById("liveLabel").textContent = "Live";
 
-  function applyToUI(key, value, updatedAt) {
+      const historyData = snapshot.val() || {};
 
-    const card  = document.getElementById(`card-${key}`);
-    const badge = document.getElementById(`badge-${key}`);
-    const label = document.getElementById(`update-${key}`);
+      LEVELS.forEach(key => {
+        const roomHistoryRaw = historyData[key] || {};
+        // Convert map tracking object entries into a manageable list sorted chronologically
+        const historyList = Object.values(roomHistoryRaw).sort((a,b) => new Date(a.updatedAt) - new Date(b.updatedAt));
+        
+        const confirmedValue = calculateConsensus(historyList);
+        const latestEntry = historyList[historyList.length - 1] || {};
 
-    card.dataset.value = value || "";
-
-    // Reset badge classes
-    badge.className = "status-badge";
-
-    if (value && LABELS[value]) {
-
-      badge.classList.add(value);
-      badge.textContent = LABELS[value];
-
-    } else {
-
-      badge.classList.add("unknown");
-      badge.textContent = "Unknown";
-    }
-
-    if (label) {
-      label.textContent =
-        "Last updated: " + (updatedAt ? formatTime(updatedAt) : "--");
-    }
-  }
-
-  onValue(ref(db, "kates-corner/levels"), (snapshot) => {
-
-    document.getElementById("liveDot").classList.remove("offline");
-    document.getElementById("liveLabel").textContent = "Live";
-
-    const data = snapshot.val() || {};
-
-    LEVELS.forEach(key => {
-
-      const entry = data[key] || {};
-
-      const latestValue = entry.value || null;
-
-      // Add newest result into rolling history
-      if (latestValue) {
-
-        const history = recentUpdates[key];
-
-        // Prevent duplicate consecutive entries
-        if (history[history.length - 1] !== latestValue) {
-          history.push(latestValue);
-        }
-
-        // Keep only latest 3
-        if (history.length > MIN_UPDATES) {
-          history.shift();
-        }
-      }
-
-      // Calculate confirmed status
-      const confirmed = getConfirmedStatus(key);
-
-      // If enough agreement exists, update confirmed state
-      if (confirmed) {
-        confirmedStatus[key] = confirmed;
-      }
-
-      // Apply confirmed status to UI
-      applyToUI(
-        key,
-        confirmedStatus[key],
-        entry.updatedAt || null
-      );
-
+        applyToUI(key, confirmedValue, latestEntry.updatedAt || null);
+      });
+    }, () => {
+      document.getElementById("liveDot").classList.add("offline");
+      document.getElementById("liveLabel").textContent = "Offline";
     });
-
-  }, () => {
-
-    document.getElementById("liveDot").classList.add("offline");
-    document.getElementById("liveLabel").textContent = "Offline";
-
-  });
-</script>
+  </script>
 </body>
 </html>
