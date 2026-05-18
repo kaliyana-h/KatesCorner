@@ -74,7 +74,18 @@
     .card[data-value="choice-c"] { box-shadow: 0 18px 35px rgba(245,166,35,0.18); }
     .card[data-value="choice-d"] { box-shadow: 0 18px 35px rgba(239,68,68,0.18); }
 
-    .card-title { font-size: 16px; color: #9aa5b1; letter-spacing: 0.2px; flex: 1 1 auto; }
+    .card-info { display: flex; flex-direction: column; gap: 8px; flex: 1 1 auto; }
+    .card-title { font-size: 16px; color: #24384d; font-weight: 600; letter-spacing: 0.2px; }
+    
+    /* Update Status Button styling */
+    .update-btn {
+      align-self: flex-start;
+      font-size: 12px; font-weight: 700; color: var(--navy);
+      text-decoration: none; background: #eef4fb;
+      padding: 5px 12px; border-radius: 12px;
+      transition: all 0.2s ease;
+    }
+    .update-btn:hover { background: #dcecff; transform: translateY(-1px); }
 
     /* Status badge (replaces dropdown) */
     .status-badge {
@@ -212,25 +223,37 @@
     <section class="levels">
 
       <div class="card" id="card-level0" data-value="">
-        <span class="card-title">Level 0 – Collaborative Study Space</span>
+        <div class="card-info">
+          <span class="card-title">Level 0 – Collaborative Study Space</span>
+          <a href="https://kaliyana-h.github.io/KatesCorner/level0.html" class="update-btn">Update Status</a>
+        </div>
         <span class="status-badge unknown" id="badge-level0">Unknown</span>
       </div>
       <div class="level-update" id="update-level0">Last updated: --</div>
 
       <div class="card" id="card-level2" data-value="">
-        <span class="card-title">Level 2 – Collaborative Study Space</span>
+        <div class="card-info">
+          <span class="card-title">Level 2 – Collaborative Study Space</span>
+          <a href="https://kaliyana-h.github.io/KatesCorner/level2.html" class="update-btn">Update Status</a>
+        </div>
         <span class="status-badge unknown" id="badge-level2">Unknown</span>
       </div>
       <div class="level-update" id="update-level2">Last updated: --</div>
 
       <div class="card" id="card-level3" data-value="">
-        <span class="card-title">Level 3 – Quiet Study Space</span>
+        <div class="card-info">
+          <span class="card-title">Level 3 – Quiet Study Space</span>
+          <a href="https://kaliyana-h.github.io/KatesCorner/level3.html" class="update-btn">Update Status</a>
+        </div>
         <span class="status-badge unknown" id="badge-level3">Unknown</span>
       </div>
       <div class="level-update" id="update-level3">Last updated: --</div>
 
       <div class="card" id="card-level4" data-value="">
-        <span class="card-title">Level 4 – Silent Study Space</span>
+        <div class="card-info">
+          <span class="card-title">Level 4 – Silent Study Space</span>
+          <a href="https://kaliyana-h.github.io/KatesCorner/level4.html" class="update-btn">Update Status</a>
+        </div>
         <span class="status-badge unknown" id="badge-level4">Unknown</span>
       </div>
       <div class="level-update" id="update-level4">Last updated: --</div>
