@@ -4,183 +4,67 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kate's Corner – Level 4</title>
-
   <style>
-    :root {
-      --navy: #003b73;
-      --page-bg: #f8fafc;
-      --card-bg: #ffffff;
-      --text: #24384d;
-      --muted: #51606f;
-      --border: #e8edf3;
-
-      --choice-a: #2ecc71;
-      --choice-b: #a8d94a;
-      --choice-c: #f5a623;
-      --choice-d: #ef4444;
-      --neutral:  #cbd5e1;
-    }
-
+    :root { --navy: #003b73; --page-bg: #f8fafc; --card-bg: #ffffff; --text: #24384d; --muted: #51606f; --border: #e8edf3; --choice-a: #2ecc71; --choice-b: #a8d94a; --choice-c: #f5a623; --choice-d: #ef4444; --neutral: #cbd5e1; }
     * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--page-bg);
-      color: var(--text);
-    }
-
-    .page {
-      min-height: 100vh;
-      padding: 41px 44px;
-      position: relative;
-    }
-
+    body { margin: 0; min-height: 100vh; font-family: Arial, Helvetica, sans-serif; background: var(--page-bg); color: var(--text); }
+    .page { min-height: 100vh; padding: 41px 44px; position: relative; }
     .header { display: flex; align-items: center; gap: 20px; }
-
-    .logo {
-      width: 56px; height: 56px;
-      border-radius: 6px;
-      background: var(--navy);
-      color: white;
-      display: grid; place-items: center;
-      font-weight: 700; letter-spacing: 0.5px;
-      box-shadow: 0 8px 15px rgba(0, 59, 115, 0.22);
-      text-decoration: none;
-    }
-
+    .logo { width: 56px; height: 56px; border-radius: 6px; background: var(--navy); color: white; display: grid; place-items: center; font-weight: 700; letter-spacing: 0.5px; box-shadow: 0 8px 15px rgba(0, 59, 115, 0.22); }
     .title { margin: 0; color: var(--navy); font-size: 28px; line-height: 1; font-weight: 800; }
     .subtitle { margin: 8px 0 0; color: var(--muted); font-size: 15px; }
-
-    .levels {
-      width: min(600px, calc(100vw - 32px));
-      margin: 67px auto 0;
-      display: flex; flex-direction: column; gap: 14px;
-    }
-
-    .card {
-      min-height: 90px;
-      border-radius: 34px;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      box-shadow: 0 18px 35px rgba(15, 23, 42, 0.08);
-      display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 16px; padding: 20px 28px 20px 44px;
-      position: relative; overflow: hidden;
-      transition: 0.25s ease;
-    }
-
-    .card::before {
-      content: ""; position: absolute; left: 0; top: 0;
-      width: 14px; height: 100%;
-      background: var(--neutral); transition: 0.25s ease;
-    }
-
+    .levels { width: min(565px, calc(100vw - 48px)); margin: 67px auto 0; display: flex; flex-direction: column; gap: 14px; }
+    .card { min-height: 112px; border-radius: 34px; background: var(--card-bg); border: 1px solid var(--border); box-shadow: 0 18px 35px rgba(15, 23, 42, 0.08); display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 0 37px 0 70px; position: relative; overflow: hidden; transition: 0.25s ease; }
+    .card::before { content: ""; position: absolute; left: 0; top: 0; width: 14px; height: 100%; background: var(--neutral); transition: 0.25s ease; }
     .card:has(select option[value="choice-a"]:checked)::before { background: var(--choice-a); }
     .card:has(select option[value="choice-b"]:checked)::before { background: var(--choice-b); }
     .card:has(select option[value="choice-c"]:checked)::before { background: var(--choice-c); }
     .card:has(select option[value="choice-d"]:checked)::before { background: var(--choice-d); }
-
     .card:has(select option[value="choice-a"]:checked) { box-shadow: 0 18px 35px rgba(46, 204, 113, 0.16); }
     .card:has(select option[value="choice-b"]:checked) { box-shadow: 0 18px 35px rgba(168, 217, 74, 0.20); }
     .card:has(select option[value="choice-c"]:checked) { box-shadow: 0 18px 35px rgba(245, 166, 35, 0.18); }
     .card:has(select option[value="choice-d"]:checked) { box-shadow: 0 18px 35px rgba(239, 68, 68, 0.18); }
-
-    .card-title { font-size: 16px; color: #9aa5b1; letter-spacing: 0.2px; flex: 1 1 auto; }
-
-    .level-select {
-      flex: 0 0 auto;
-      border: 1px solid #b9b9b9; border-radius: 6px;
-      background: linear-gradient(#f4f4f4, #dcdcdc);
-      color: #202124; font-size: 14px; font-weight: 700;
-      padding: 8px 10px; cursor: pointer;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.18);
-    }
-
+    .card-title { font-size: 16px; color: #9aa5b1; letter-spacing: 0.2px; white-space: nowrap; }
+    .level-select { min-width: 145px; border: 1px solid #b9b9b9; border-radius: 6px; background: linear-gradient(#f4f4f4, #dcdcdc); color: #202124; font-size: 14px; font-weight: 700; padding: 8px 10px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.18); }
     .level-select:hover { background: linear-gradient(#ffffff, #e8e8e8); }
-
-    .level-select.sel-a { color: #1a7a40; }
-    .level-select.sel-b { color: #5a7a00; }
-    .level-select.sel-c { color: #b87900; }
-    .level-select.sel-d { color: #c62828; }
-
-    option[value="choice-a"] { color: #1a7a40; font-weight: bold; }
-    option[value="choice-b"] { color: #5a7a00; font-weight: bold; }
-    option[value="choice-c"] { color: #b87900; font-weight: bold; }
-    option[value="choice-d"] { color: #c62828; font-weight: bold; }
-
-    .legend {
-      display: flex; justify-content: center; flex-wrap: wrap;
-      gap: 10px; margin-top: 35px;
-    }
-
-    .legend-item {
-      background: #ffffff; border-radius: 6px; padding: 8px 11px;
-      display: flex; align-items: center; gap: 8px;
-      color: #334155; font-size: 13px;
-      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
-    }
-
-    .dot { width: 15px; height: 15px; border-radius: 4px; display: inline-block; flex-shrink: 0; }
+    option[value="choice-a"] { color: #15803d; font-weight: bold; }
+    option[value="choice-b"] { color: #4a7a00; font-weight: bold; }
+    option[value="choice-c"] { color: #c2410c; font-weight: bold; }
+    option[value="choice-d"] { color: #b91c1c; font-weight: bold; }
+    .legend { display: flex; justify-content: center; gap: 16px; margin-top: 35px; }
+    .legend-item { background: #ffffff; border-radius: 6px; padding: 8px 11px; display: flex; align-items: center; gap: 8px; color: #334155; font-size: 14px; box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04); }
+    .dot { width: 15px; height: 15px; border-radius: 4px; display: inline-block; }
     .dot.choice-a { background: var(--choice-a); }
     .dot.choice-b { background: var(--choice-b); }
     .dot.choice-c { background: var(--choice-c); }
     .dot.choice-d { background: var(--choice-d); }
-    .dot.unknown  { background: var(--neutral);  }
-
-    .back-link {
-      display: inline-block;
-      margin-top: 32px;
-      color: var(--navy);
-      font-size: 14px;
-      text-decoration: none;
-      opacity: 0.7;
-    }
-    .back-link:hover { opacity: 1; }
-
+    .status-msg { text-align: center; margin-top: 15px; font-size: 14px; font-weight: bold; color: #15803d; min-height: 20px; }
     .disclaimer { position: absolute; left: 44px; bottom: 38px; color: #536476; font-size: 13px; }
-
-    @media (max-width: 500px) {
-      .page { padding: 28px 16px; }
-      .header { align-items: flex-start; }
-      .levels { margin-top: 40px; }
-      .card {
-        padding: 20px 20px 20px 36px;
-        border-radius: 24px;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 14px;
-        text-align: center;
-      }
-      .level-select { width: 100%; }
-      .disclaimer { position: static; margin-top: 35px; }
-    }
+    @media (max-width: 680px) { .page { padding: 28px 20px; } .header { align-items: flex-start; } .levels { margin-top: 50px; } .card { padding: 24px; border-radius: 24px; flex-direction: column; gap: 18px; text-align: center; } .card-title { white-space: normal; } .legend { flex-wrap: wrap; } .disclaimer { position: static; margin-top: 35px; } }
   </style>
 </head>
-
 <body>
   <main class="page">
     <header class="header">
-      <a class="logo" href="index.html" aria-label="Back to all levels">KC</a>
+      <div class="logo">KC</div>
       <div>
         <h1 class="title">Kate's Corner</h1>
-        <p class="subtitle">A quick peek at how busy Kate Edger's study rooms are</p>
+        <p class="subtitle">Update busyness status for this floor</p>
       </div>
     </header>
 
     <section class="levels">
       <div class="card">
         <span class="card-title">Level 4 – Silent Study Space</span>
-        <select class="level-select" aria-label="Level 4 – Silent Study Space availability">
-          <option value="">How busy is it?</option>
-          <option value="choice-a">Empty – Very easy to find seats</option>
-          <option value="choice-b">Moderate – Quite easy to find seats</option>
-          <option value="choice-c">Limited – Might be difficult to find seats</option>
-          <option value="choice-d">Full – Basically no seats left</option>
+        <select class="level-select" id="statusSelect">
+          <option value="">Choose one...</option>
+          <option value="choice-a">Empty</option>
+          <option value="choice-b">Moderate</option>
+          <option value="choice-c">Limited</option>
+          <option value="choice-d">Full</option>
         </select>
       </div>
+      <div class="status-msg" id="statusMsg"></div>
     </section>
 
     <div class="legend">
@@ -188,30 +72,49 @@
       <div class="legend-item"><span class="dot choice-b"></span>Moderate</div>
       <div class="legend-item"><span class="dot choice-c"></span>Limited</div>
       <div class="legend-item"><span class="dot choice-d"></span>Full</div>
-      <div class="legend-item"><span class="dot unknown"></span>Unknown</div>
     </div>
-
-    <a class="back-link" href="index.html">← Back to all levels</a>
-
-    <p class="disclaimer">Status updates are approximate.</p>
+    <div class="disclaimer">Status updates are approximate and submitted by students.</div>
   </main>
 
-  <script>
-    const colourMap = {
-      'choice-a': 'sel-a',
-      'choice-b': 'sel-b',
-      'choice-c': 'sel-c',
-      'choice-d': 'sel-d',
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey:            "AIzaSyA9JJLRflZghT5y0To_lc384iOARQNnzfw",
+      authDomain:        "kates-corner-d1d82.firebaseapp.com",
+      databaseURL:       "https://kates-corner-d1d82-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId:         "kates-corner-d1d82",
+      storageBucket:     "kates-corner-d1d82.firebasestorage.app",
+      messagingSenderId: "856271823905",
+      appId:             "1:856271823905:web:71eeea2c855c954e91af60",
+      measurementId:     "G-5SN58F3Z56"
     };
 
-    document.querySelectorAll('.level-select').forEach(select => {
-      function updateColour() {
-        Object.values(colourMap).forEach(cls => select.classList.remove(cls));
-        const cls = colourMap[select.value];
-        if (cls) select.classList.add(cls);
-      }
-      select.addEventListener('change', updateColour);
-      updateColour();
+    const db = getDatabase(initializeApp(firebaseConfig));
+    const floorKey = "level4";
+    const selectEl = document.getElementById("statusSelect");
+    const msgEl = document.getElementById("statusMsg");
+
+    onValue(ref(db, `kates-corner/levels/${floorKey}`), (snapshot) => {
+      const data = snapshot.val();
+      if (data && data.value) selectEl.value = data.value;
+    });
+
+    selectEl.addEventListener("change", (e) => {
+      set(ref(db, `kates-corner/levels/${floorKey}`), {
+        value: e.target.value,
+        updatedAt: new Date().toISOString()
+      })
+      .then(() => {
+        msgEl.style.color = "#15803d";
+        msgEl.textContent = "Status updated successfully!";
+        setTimeout(() => { msgEl.textContent = ""; }, 3000);
+      })
+      .catch(() => {
+        msgEl.style.color = "#b91c1c";
+        msgEl.textContent = "Error saving update.";
+      });
     });
   </script>
 </body>
