@@ -4,416 +4,747 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kate's Corner</title>
+
   <style>
-    #liveDateTime {
-      position: fixed; top: 16px; right: 20px;
-      font-size: 14px; font-weight: 600; color: #24384d;
-      background: white; padding: 6px 12px;
-      border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      z-index: 50;
+    * {
+      box-sizing: border-box;
     }
-    .level-update { font-size: 12px; color: #64748b; margin: 4px 0 8px 10px; }
 
-    :root {
-      --navy: #003b73;
-      --page-bg: #f8fafc;
-      --card-bg: #ffffff;
-      --text: #24384d;
-      --muted: #51606f;
-      --border: #e8edf3;
-      --choice-a: #2ecc71;
-      --choice-b: #a8d94a;
-      --choice-c: #f5a623;
-      --choice-d: #ef4444;
-      --neutral:  #cbd5e1;
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      color: #1f2937;
     }
-    * { box-sizing: border-box; }
-    body { margin: 0; min-height: 100vh; font-family: Arial, Helvetica, sans-serif; background: var(--page-bg); color: var(--text); }
-    .page { min-height: 100vh; padding: 41px 44px; position: relative; }
-    .header { display: flex; align-items: center; gap: 20px; }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 40px 48px 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
     .logo {
-      width: 56px; height: 56px; border-radius: 6px;
-      background: var(--navy); color: white;
-      display: grid; place-items: center;
-      font-weight: 700; letter-spacing: 0.5px;
-      box-shadow: 0 8px 15px rgba(0,59,115,0.22);
+      width: 56px;
+      height: 56px;
+      background: #003b70;
+      color: white;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
     }
-    .title { margin: 0; color: var(--navy); font-size: 28px; line-height: 1; font-weight: 800; }
-    .subtitle { margin: 8px 0 0; color: var(--muted); font-size: 15px; }
 
-    .live-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: #f0fdf4; border: 1px solid #bbf7d0;
-      border-radius: 20px; padding: 4px 10px;
-      font-size: 12px; font-weight: 600; color: #15803d; margin-top: 8px;
+    h1 {
+      margin: 0;
+      color: #003b70;
+      font-size: 2rem;
+      letter-spacing: 1px;
     }
-    .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; animation: pulse 1.8s ease-in-out infinite; }
-    .live-dot.offline { background: #94a3b8; animation: none; }
-    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.85)} }
 
-    .levels { width: min(600px, calc(100vw - 32px)); margin: 50px auto 0; display: flex; flex-direction: column; gap: 14px; }
+    .brand p {
+      margin: 6px 0 0;
+      color: #5f6f82;
+    }
 
-    .card {
-      min-height: 90px; border-radius: 34px;
-      background: var(--card-bg); border: 1px solid var(--border);
-      box-shadow: 0 18px 35px rgba(15,23,42,0.08);
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 16px; padding: 20px 28px 20px 44px;
-      position: relative; overflow: hidden; transition: 0.25s ease;
+    .current-time {
+      background: white;
+      padding: 10px 16px;
+      border-radius: 6px;
+      box-shadow: 0 4px 18px rgba(15, 23, 42, 0.12);
+      font-weight: bold;
+      color: #334155;
     }
-    .card::before {
-      content: ""; position: absolute; left: 0; top: 0;
-      width: 14px; height: 100%; background: var(--neutral); transition: background 0.25s ease;
-    }
-    .card[data-value="choice-a"]::before { background: var(--choice-a); }
-    .card[data-value="choice-b"]::before { background: var(--choice-b); }
-    .card[data-value="choice-c"]::before { background: var(--choice-c); }
-    .card[data-value="choice-d"]::before { background: var(--choice-d); }
-    .card[data-value="choice-a"] { box-shadow: 0 18px 35px rgba(46,204,113,0.16); }
-    .card[data-value="choice-b"] { box-shadow: 0 18px 35px rgba(168,217,74,0.20); }
-    .card[data-value="choice-c"] { box-shadow: 0 18px 35px rgba(245,166,35,0.18); }
-    .card[data-value="choice-d"] { box-shadow: 0 18px 35px rgba(239,68,68,0.18); }
 
-    .card-info { display: flex; flex-direction: column; gap: 8px; flex: 1 1 auto; }
-    .card-title { font-size: 16px; color: #24384d; font-weight: 600; letter-spacing: 0.2px; }
-    
-    /* Update Status Button styling */
-    .update-btn {
-      align-self: flex-start;
-      font-size: 12px; font-weight: 700; color: var(--navy);
-      text-decoration: none; background: #eef4fb;
-      padding: 5px 12px; border-radius: 12px;
-      transition: all 0.2s ease;
+    .page-content {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 20px 40px;
     }
-    .update-btn:hover { background: #dcecff; transform: translateY(-1px); }
 
-    /* Status badge (replaces dropdown) */
-    .status-badge {
-      flex: 0 0 auto;
-      padding: 8px 16px; border-radius: 20px;
-      font-size: 14px; font-weight: 700;
-      border: 2px solid transparent;
-      transition: 0.25s ease;
-      white-space: nowrap;
+    .rule-box {
+      background: #e8f1fb;
+      border-left: 6px solid #003b70;
+      padding: 14px 18px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      color: #334155;
+      font-size: 0.95rem;
     }
-    .status-badge.unknown  { background: #f1f5f9; color: #94a3b8; border-color: #e2e8f0; }
-    .status-badge.choice-a { background: #dcfce7; color: #15803d; border-color: #bbf7d0; }
-    .status-badge.choice-b { background: #f0fce4; color: #4a7a00; border-color: #d4f0a0; }
-    .status-badge.choice-c { background: #fff7ed; color: #c2410c; border-color: #fed7aa; }
-    .status-badge.choice-d { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .bookmark-button,
+    .reset-button {
+      background: white;
+      color: #003b70;
+      border: none;
+      border-radius: 999px;
+      padding: 10px 20px;
+      font-weight: bold;
+      box-shadow: 0 4px 18px rgba(15, 23, 42, 0.10);
+      cursor: pointer;
+    }
+
+    .reset-button {
+      color: #b91c1c;
+    }
+
+    .room-list {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .room-card {
+      --side-colour: #94a3b8;
+      --card-tint: rgba(148, 163, 184, 0.08);
+
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(90deg, var(--card-tint), white 42%);
+      border-radius: 24px;
+      padding: 22px 28px 22px 44px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+      transition: background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .room-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 24px;
+      height: 100%;
+      background: var(--side-colour);
+      transition: background 0.2s ease;
+    }
+
+    .room-card h2 {
+      margin: 0 0 14px;
+      font-size: 1rem;
+      font-weight: normal;
+      color: #8794a5;
+    }
+
+    .status-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .status-select {
+      min-width: 320px;
+      padding: 9px 12px;
+      font-weight: bold;
+      border: 1px solid #9ca3af;
+      border-radius: 6px;
+      background: white;
+    }
+
+    .status-row button {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 999px;
+      font-weight: bold;
+      cursor: pointer;
+      color: white;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    .status-row button:hover {
+      transform: translateY(-1px);
+      opacity: 0.9;
+    }
+
+    .btn-empty {
+      background: #22c55e;
+    }
+
+    .btn-moderate {
+      background: #84cc16;
+    }
+
+    .btn-limited {
+      background: #f59e0b;
+    }
+
+    .btn-full {
+      background: #ef4444;
+    }
+
+    .status-details {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 24px;
+    }
+
+    .status-details p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: #475569;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-weight: bold;
+      color: white;
+      background: #94a3b8;
+    }
+
+    .badge.empty {
+      background: #22c55e;
+    }
+
+    .badge.moderate {
+      background: #84cc16;
+    }
+
+    .badge.limited {
+      background: #f59e0b;
+    }
+
+    .badge.full {
+      background: #ef4444;
+    }
+
+    .badge.unknown {
+      background: #94a3b8;
+    }
+
+    .decision-text {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-weight: bold;
+      background: #e2e8f0;
+      color: #334155;
+    }
+
+    .decision-text.changed {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .recent-list {
+      margin: 12px 0 0;
+      padding-left: 18px;
+      color: #64748b;
+      font-size: 0.85rem;
+    }
+
+    .recent-list li {
+      margin-bottom: 6px;
+    }
 
     .legend {
-      display: flex; justify-content: center; flex-wrap: wrap;
-      gap: 10px; margin-top: 35px;
-    }
-    .legend-item {
-      background: #fff; border-radius: 6px; padding: 10px 14px;
-      display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
-      color: #334155; font-size: 13px;
-      box-shadow: 0 8px 18px rgba(15,23,42,0.04);
-    }
-    .dot { width: 15px; height: 15px; border-radius: 4px; display: inline-block; flex-shrink: 0; }
-    .dot.choice-a { background: var(--choice-a); }
-    .dot.choice-b { background: var(--choice-b); }
-    .dot.choice-c { background: var(--choice-c); }
-    .dot.choice-d { background: var(--choice-d); }
-    .dot.unknown  { background: var(--neutral); }
-    .legend-desc  { font-size: 11px; color: #64748b; margin-top: 1px; }
-
-    .intro-box {
-      width: min(600px, calc(100vw - 32px)); margin: 28px auto 0;
-      background: #eef4fb; border: 1px solid #cddcee;
-      border-radius: 14px; padding: 14px 20px;
-      color: #2e4a66; font-size: 14px; line-height: 1.55;
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      margin: 34px 0 14px;
+      flex-wrap: wrap;
     }
 
-    .disclaimer { position: absolute; left: 44px; bottom: 38px; color: #536476; font-size: 13px; }
-
-    /* Share / Bookmark */
-    #kcShareBookmark { position: absolute; left: 1cm; top: 118px; z-index: 10; }
-    #kcShareBookmark .kc-bookmark-btn {
-      display: inline-flex; align-items: center; gap: 10px;
-      background: #fff; border: 1px solid var(--border); border-radius: 999px; padding: 9px 12px;
-      box-shadow: 0 10px 20px rgba(15,23,42,0.06); color: var(--navy); font-weight: 800; cursor: pointer;
+    .legend span {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      color: #475569;
+      font-size: 0.9rem;
     }
-    #kcShareBookmark .kc-bookmark-btn:hover { transform: translateY(-1px); box-shadow: 0 14px 26px rgba(15,23,42,0.10); }
-    #kcShareBookmark .kc-bookmark-btn svg { width: 18px; height: 18px; stroke: var(--navy); fill: none; stroke-width: 2; }
 
-    #kcBmOverlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: none; justify-content: center; align-items: center; padding: 16px; z-index: 100; }
-    #kcBmOverlay.open { display: flex; }
-    #kcBmOverlay .kc-bm-modal { width: min(520px,92vw); background: #fff; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,.25); padding: 18px; }
-    #kcBmOverlay .kc-bm-modal h2 { font-size: 16px; margin: 0 0 10px; color: var(--navy); }
-    #kcBmOverlay .kc-bm-modal p { margin: 0 0 10px; color: #444; font-size: 13px; line-height: 1.35; }
-    #kcBmOverlay .kc-bm-actions { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; margin-top: 12px; }
-    #kcBmOverlay .kc-bm-btn { appearance: none; border: 1px solid #ddd; background: #fff; border-radius: 12px; padding: 10px 14px; font-weight: 800; cursor: pointer; }
-    #kcBmOverlay .kc-bm-btn.primary { background: #111; color: #fff; border-color: #111; }
-    #kcBmOverlay .kc-bm-tip { margin-top: 10px; padding: 10px; border-radius: 12px; background: #f6f7f9; border: 1px solid #e6e7ea; font-size: 12px; color: #333; }
-    #kcBmOverlay .kc-bm-tip ol { margin: 8px 0 0 18px; padding: 0; }
-    #kcBmOverlay .kc-bm-tip li { margin: 6px 0; }
-
-    /* Sidebar Ads */
-    .sidebar-container { position: fixed; right: 24px; top: 60px; display: flex; flex-direction: column; gap: 14px; z-index: 2; }
-    .sidebar-ad { width: 220px; background: rgba(255,255,255,0.9); border: 1px solid rgba(226,232,240,0.9); border-radius: 16px; padding: 16px; box-shadow: 0 6px 18px rgba(15,23,42,0.05); transition: 0.2s ease; }
-    .sidebar-ad:hover { transform: translateY(-2px); }
-    .ad-tag { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #64748b; margin-bottom: 10px; display: inline-block; }
-    .sidebar-ad h3 { margin: 0 0 8px; font-size: 16px; color: #334155; }
-    .sidebar-ad p  { margin: 0 0 14px; font-size: 13px; color: #64748b; }
-    .ad-btn { display: inline-block; text-decoration: none; background: #eef4fb; color: #003b73; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; }
-    .ad-btn:hover { background: #dcecff; }
-
-    @media (max-width: 1100px) {
-      .sidebar-container { position: static; width: min(600px, calc(100vw - 32px)); margin: 24px auto 0; }
-      .sidebar-ad { width: 100%; }
+    .legend-box {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      display: inline-block;
     }
-    @media (max-width: 500px) {
-      .page { padding: 28px 16px; }
-      .levels { margin-top: 40px; }
-      .card { padding: 20px 20px 20px 36px; border-radius: 24px; flex-wrap: wrap; gap: 12px; }
-      .disclaimer { position: static; margin-top: 35px; }
-      #kcShareBookmark { position: static; margin-top: 12px; }
+
+    .empty-box {
+      background: #22c55e;
+    }
+
+    .moderate-box {
+      background: #84cc16;
+    }
+
+    .limited-box {
+      background: #f59e0b;
+    }
+
+    .full-box {
+      background: #ef4444;
+    }
+
+    .unknown-box {
+      background: #94a3b8;
+    }
+
+    .note {
+      text-align: left;
+      color: #475569;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 760px) {
+      .page-header {
+        flex-direction: column;
+        gap: 16px;
+        padding: 28px 20px 18px;
+      }
+
+      .status-select {
+        min-width: 100%;
+      }
+
+      .status-row button {
+        flex: 1;
+      }
+
+      .status-details {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
-<body>
-  <div id="liveDateTime"></div>
 
-  <main class="page">
-    <header class="header">
+<body>
+  <header class="page-header">
+    <div class="brand">
       <div class="logo">KC</div>
       <div>
-        <h1 class="title">Kate's Corner</h1>
-        <p class="subtitle">A quick peek at how busy Kate Edger's study rooms are</p>
-        <span class="live-badge">
-          <span class="live-dot offline" id="liveDot"></span>
-          <span id="liveLabel">Connecting…</span>
-        </span>
-      </div>
-    </header>
-
-    <div id="kcShareBookmark">
-      <button class="kc-bookmark-btn" id="kcShareBookmarkBtn" type="button">
-        <svg viewBox="0 0 24 24"><path d="M12 3.2l2.6 5.4 6 .9-4.3 4.2 1 5.9L12 16.9 6.7 19.6l1-5.9L3.4 9.5l6-.9L12 3.2z"/></svg>
-        <span>Share / Bookmark this page</span>
-      </button>
-    </div>
-
-    <div id="kcBmOverlay" role="dialog" aria-modal="true">
-      <div class="kc-bm-modal">
-        <h2>Share / Bookmark this page</h2>
-        <p id="kcBmStatus">Browsers usually don't allow websites to create bookmarks automatically.</p>
-        <div class="kc-bm-actions">
-          <button class="kc-bm-btn" id="kcBmCloseBtn">Close</button>
-          <button class="kc-bm-btn" id="kcBmCopyBtn">Copy link</button>
-          <button class="kc-bm-btn primary" id="kcBmShareBtn">Share</button>
-        </div>
-        <div class="kc-bm-tip" id="kcBmTip" style="display:none;"></div>
+        <h1>Kate's Corner</h1>
+        <p>A quick peek at how busy Kate Edger's study rooms are</p>
       </div>
     </div>
 
-    <div class="intro-box">
-      <div style="text-align:center;font-size:16px;font-weight:800;line-height:1.5;color:#003b73;margin-bottom:10px;">
-        Live busyness status — updated by students on each floor
-      </div>
-      <div style="text-align:center;font-size:15px;line-height:1.8;color:#425466;">
-        Scan the QR code on each floor to report how busy it is.
-        This page updates in real time as students check in.
-      </div>
+    <div id="currentTime" class="current-time"></div>
+  </header>
+
+  <main class="page-content">
+    <div class="rule-box">
+      <strong>Update rule:</strong> The left-hand colour changes immediately when a room status is selected.
+      The confirmed status still waits for at least <strong>3 recent updates</strong> with at least
+      <strong>60%</strong> agreement.
     </div>
 
-    <section class="levels">
+    <div class="top-actions">
+      <button class="bookmark-button" type="button">☆ Share / Bookmark this page</button>
+      <button class="reset-button" type="button" id="resetDataButton">Reset test updates</button>
+    </div>
 
-      <div class="card" id="card-level0" data-value="">
-        <div class="card-info">
-          <span class="card-title">Level 0 – Collaborative Study Space</span>
-          <a href="https://kaliyana-h.github.io/KatesCorner/level0.html" class="update-btn">Update Status</a>
+    <section class="room-list">
+      <div class="room-card" data-room-id="level0">
+        <h2>Level 0 – Collaborative Study Space</h2>
+        <div class="status-row">
+          <select class="status-select" data-room-id="level0">
+            <option value="">How busy is it?</option>
+            <option value="empty">Empty – Very easy to find seats</option>
+            <option value="moderate">Moderate – Some seats available</option>
+            <option value="limited">Limited – Might be difficult to find seats</option>
+            <option value="full">Full – Basically no seats left</option>
+          </select>
+          <button class="btn-empty" type="button" data-room-id="level0" data-status="empty">Empty</button>
+          <button class="btn-moderate" type="button" data-room-id="level0" data-status="moderate">Moderate</button>
+          <button class="btn-limited" type="button" data-room-id="level0" data-status="limited">Limited</button>
+          <button class="btn-full" type="button" data-room-id="level0" data-status="full">Full</button>
         </div>
-        <span class="status-badge unknown" id="badge-level0">Unknown</span>
-      </div>
-      <div class="level-update" id="update-level0">Last updated: --</div>
-
-      <div class="card" id="card-level2" data-value="">
-        <div class="card-info">
-          <span class="card-title">Level 2 – Collaborative Study Space</span>
-          <a href="https://kaliyana-h.github.io/KatesCorner/level2.html" class="update-btn">Update Status</a>
+        <div class="status-details">
+          <p>Confirmed status: <span id="confirmed-level0" class="badge unknown">Unknown</span></p>
+          <p>Latest report: <span id="latest-report-level0" class="badge unknown">--</span></p>
+          <p>Last update: <span id="last-update-level0">--</span></p>
+          <p>Last confirmed change: <span id="last-change-level0">--</span></p>
+          <p>Recent updates counted: <span id="recent-count-level0">0/3</span></p>
+          <p>Confidence: <span id="confidence-level0">0%</span></p>
+          <p>Decision: <span id="decision-level0" class="decision-text">Waiting for updates</span></p>
         </div>
-        <span class="status-badge unknown" id="badge-level2">Unknown</span>
+        <ul id="recent-list-level0" class="recent-list"></ul>
       </div>
-      <div class="level-update" id="update-level2">Last updated: --</div>
 
-      <div class="card" id="card-level3" data-value="">
-        <div class="card-info">
-          <span class="card-title">Level 3 – Quiet Study Space</span>
-          <a href="https://kaliyana-h.github.io/KatesCorner/level3.html" class="update-btn">Update Status</a>
+      <div class="room-card" data-room-id="level2">
+        <h2>Level 2 – Collaborative Study Space</h2>
+        <div class="status-row">
+          <select class="status-select" data-room-id="level2">
+            <option value="">How busy is it?</option>
+            <option value="empty">Empty – Very easy to find seats</option>
+            <option value="moderate">Moderate – Some seats available</option>
+            <option value="limited">Limited – Might be difficult to find seats</option>
+            <option value="full">Full – Basically no seats left</option>
+          </select>
+          <button class="btn-empty" type="button" data-room-id="level2" data-status="empty">Empty</button>
+          <button class="btn-moderate" type="button" data-room-id="level2" data-status="moderate">Moderate</button>
+          <button class="btn-limited" type="button" data-room-id="level2" data-status="limited">Limited</button>
+          <button class="btn-full" type="button" data-room-id="level2" data-status="full">Full</button>
         </div>
-        <span class="status-badge unknown" id="badge-level3">Unknown</span>
-      </div>
-      <div class="level-update" id="update-level3">Last updated: --</div>
-
-      <div class="card" id="card-level4" data-value="">
-        <div class="card-info">
-          <span class="card-title">Level 4 – Silent Study Space</span>
-          <a href="https://kaliyana-h.github.io/KatesCorner/level4.html" class="update-btn">Update Status</a>
+        <div class="status-details">
+          <p>Confirmed status: <span id="confirmed-level2" class="badge unknown">Unknown</span></p>
+          <p>Latest report: <span id="latest-report-level2" class="badge unknown">--</span></p>
+          <p>Last update: <span id="last-update-level2">--</span></p>
+          <p>Last confirmed change: <span id="last-change-level2">--</span></p>
+          <p>Recent updates counted: <span id="recent-count-level2">0/3</span></p>
+          <p>Confidence: <span id="confidence-level2">0%</span></p>
+          <p>Decision: <span id="decision-level2" class="decision-text">Waiting for updates</span></p>
         </div>
-        <span class="status-badge unknown" id="badge-level4">Unknown</span>
+        <ul id="recent-list-level2" class="recent-list"></ul>
       </div>
-      <div class="level-update" id="update-level4">Last updated: --</div>
 
+      <div class="room-card" data-room-id="level3">
+        <h2>Level 3 – Quiet Study Space</h2>
+        <div class="status-row">
+          <select class="status-select" data-room-id="level3">
+            <option value="">How busy is it?</option>
+            <option value="empty">Empty – Very easy to find seats</option>
+            <option value="moderate">Moderate – Some seats available</option>
+            <option value="limited">Limited – Might be difficult to find seats</option>
+            <option value="full">Full – Basically no seats left</option>
+          </select>
+          <button class="btn-empty" type="button" data-room-id="level3" data-status="empty">Empty</button>
+          <button class="btn-moderate" type="button" data-room-id="level3" data-status="moderate">Moderate</button>
+          <button class="btn-limited" type="button" data-room-id="level3" data-status="limited">Limited</button>
+          <button class="btn-full" type="button" data-room-id="level3" data-status="full">Full</button>
+        </div>
+        <div class="status-details">
+          <p>Confirmed status: <span id="confirmed-level3" class="badge unknown">Unknown</span></p>
+          <p>Latest report: <span id="latest-report-level3" class="badge unknown">--</span></p>
+          <p>Last update: <span id="last-update-level3">--</span></p>
+          <p>Last confirmed change: <span id="last-change-level3">--</span></p>
+          <p>Recent updates counted: <span id="recent-count-level3">0/3</span></p>
+          <p>Confidence: <span id="confidence-level3">0%</span></p>
+          <p>Decision: <span id="decision-level3" class="decision-text">Waiting for updates</span></p>
+        </div>
+        <ul id="recent-list-level3" class="recent-list"></ul>
+      </div>
+
+      <div class="room-card" data-room-id="level4">
+        <h2>Level 4 – Silent Study Space</h2>
+        <div class="status-row">
+          <select class="status-select" data-room-id="level4">
+            <option value="">How busy is it?</option>
+            <option value="empty">Empty – Very easy to find seats</option>
+            <option value="moderate">Moderate – Some seats available</option>
+            <option value="limited">Limited – Might be difficult to find seats</option>
+            <option value="full">Full – Basically no seats left</option>
+          </select>
+          <button class="btn-empty" type="button" data-room-id="level4" data-status="empty">Empty</button>
+          <button class="btn-moderate" type="button" data-room-id="level4" data-status="moderate">Moderate</button>
+          <button class="btn-limited" type="button" data-room-id="level4" data-status="limited">Limited</button>
+          <button class="btn-full" type="button" data-room-id="level4" data-status="full">Full</button>
+        </div>
+        <div class="status-details">
+          <p>Confirmed status: <span id="confirmed-level4" class="badge unknown">Unknown</span></p>
+          <p>Latest report: <span id="latest-report-level4" class="badge unknown">--</span></p>
+          <p>Last update: <span id="last-update-level4">--</span></p>
+          <p>Last confirmed change: <span id="last-change-level4">--</span></p>
+          <p>Recent updates counted: <span id="recent-count-level4">0/3</span></p>
+          <p>Confidence: <span id="confidence-level4">0%</span></p>
+          <p>Decision: <span id="decision-level4" class="decision-text">Waiting for updates</span></p>
+        </div>
+        <ul id="recent-list-level4" class="recent-list"></ul>
+      </div>
     </section>
 
-    <div class="legend">
-      <div class="legend-item">
-        <div style="display:flex;align-items:center;gap:8px;"><span class="dot choice-a"></span><strong>Empty</strong></div>
-        <div class="legend-desc">Plenty of seats — go right up</div>
-      </div>
-      <div class="legend-item">
-        <div style="display:flex;align-items:center;gap:8px;"><span class="dot choice-b"></span><strong>Moderate</strong></div>
-        <div class="legend-desc">Some seats available</div>
-      </div>
-      <div class="legend-item">
-        <div style="display:flex;align-items:center;gap:8px;"><span class="dot choice-c"></span><strong>Limited</strong></div>
-        <div class="legend-desc">Getting full — consider another floor</div>
-      </div>
-      <div class="legend-item">
-        <div style="display:flex;align-items:center;gap:8px;"><span class="dot choice-d"></span><strong>Full</strong></div>
-        <div class="legend-desc">No seats left — try elsewhere</div>
-      </div>
-      <div class="legend-item">
-        <div style="display:flex;align-items:center;gap:8px;"><span class="dot unknown"></span><strong>Unknown</strong></div>
-        <div class="legend-desc">Status not yet reported</div>
-      </div>
-    </div>
+    <section class="legend">
+      <span><span class="legend-box empty-box"></span> Empty</span>
+      <span><span class="legend-box moderate-box"></span> Moderate</span>
+      <span><span class="legend-box limited-box"></span> Limited</span>
+      <span><span class="legend-box full-box"></span> Full</span>
+      <span><span class="legend-box unknown-box"></span> Unknown</span>
+    </section>
 
-    <p class="disclaimer">Status updates are approximate and submitted by students.</p>
+    <p class="note">
+      Prototype note: this single HTML file works when it is downloaded and opened in a browser. Microsoft Teams preview may block interactive JavaScript.
+    </p>
   </main>
 
-  <div class="sidebar-container">
-    <div class="sidebar-ad">
-      <span class="ad-tag">Sponsored</span>
-      <h3>Campus Café ☕</h3>
-      <p>Student coffee specials and quiet seating throughout the week.</p>
-      <a href="#" class="ad-btn">View Offer</a>
-    </div>
-    <div class="sidebar-ad">
-      <span class="ad-tag">Sponsored</span>
-      <h3>University Bookstore 📚</h3>
-      <p>Discounts on stationery, notebooks, and selected course materials.</p>
-      <a href="#" class="ad-btn">Browse Deals</a>
-    </div>
-    <div class="sidebar-ad">
-      <span class="ad-tag">Sponsored</span>
-      <h3>Campus Eats 🍔</h3>
-      <p>Nearby restaurants with student deals and late-night meals.</p>
-      <a href="#" class="ad-btn">Explore Food</a>
-    </div>
-  </div>
-
   <script>
-    // Clock
-    function updateDateTime() {
-      document.getElementById("liveDateTime").textContent =
-        new Date().toLocaleDateString() + " | " +
-        new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit', second:'2-digit' });
-    }
-    updateDateTime(); setInterval(updateDateTime, 1000);
+    const ROOM_IDS = ["level0", "level2", "level3", "level4"];
+    const WINDOW_MS = 5 * 60 * 1000;
+    const MIN_UPDATES = 3;
+    const THRESHOLD = 0.6;
 
-    // Share modal
-    (function(){
-      const btn = document.getElementById('kcShareBookmarkBtn');
-      const overlay = document.getElementById('kcBmOverlay');
-      const closeBtn = document.getElementById('kcBmCloseBtn');
-      const copyBtn = document.getElementById('kcBmCopyBtn');
-      const shareBtn = document.getElementById('kcBmShareBtn');
-      const tipBox = document.getElementById('kcBmTip');
-      const statusLine = document.getElementById('kcBmStatus');
-      const pageUrl = window.location.href;
-      const pageTitle = document.title;
-      const open = () => overlay.classList.add('open');
-      const close = () => { overlay.classList.remove('open'); tipBox.style.display='none'; };
-      function showTips(){
-        const ua = navigator.userAgent;
-        let html = '<ol>';
-        if (/iPhone|iPad|iPod/i.test(ua)) html += '<li>Open in <b>Safari</b>.</li><li>Tap <b>Share</b> → <b>Add Bookmark</b>.</li>';
-        else if (/Android/i.test(ua)) html += '<li>Open browser menu (⋮).</li><li>Tap <b>Bookmark</b>.</li>';
-        else html += `<li>Press <b>${/Mac/i.test(ua)?'⌘':'Ctrl'} + D</b>.</li>`;
-        html += '</ol><div style="margin-top:8px"><b>Link:</b> ' + pageUrl + '</div>';
-        tipBox.innerHTML = html; tipBox.style.display = 'block';
-      }
-      async function doShare(){ if (!navigator.share) return; try { await navigator.share({title:pageTitle,url:pageUrl}); } catch(_){} }
-      btn.addEventListener('click', () => { open(); showTips(); doShare(); });
-      closeBtn.addEventListener('click', close);
-      copyBtn.addEventListener('click', async () => {
-        try { await navigator.clipboard.writeText(pageUrl); statusLine.textContent='Link copied!'; } catch(_){ window.prompt('Copy:', pageUrl); }
-      });
-      shareBtn.addEventListener('click', doShare);
-      overlay.addEventListener('click', e => { if (e.target===overlay) close(); });
-      document.addEventListener('keydown', e => { if (e.key==='Escape') close(); });
-    })();
-  </script>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-    const firebaseConfig = {
-      apiKey:            "AIzaSyA9JJLRflZghT5y0To_lc384iOARQNnzfw",
-      authDomain:        "kates-corner-d1d82.firebaseapp.com",
-      databaseURL:       "https://kates-corner-d1d82-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId:         "kates-corner-d1d82",
-      storageBucket:     "kates-corner-d1d82.firebasestorage.app",
-      messagingSenderId: "856271823905",
-      appId:             "1:856271823905:web:71eeea2c855c954e91af60",
-      measurementId:     "G-5SN58F3Z56"
+    const COLOURS = {
+      empty: "#22c55e",
+      moderate: "#84cc16",
+      limited: "#f59e0b",
+      full: "#ef4444",
+      unknown: "#94a3b8"
     };
 
-    const db = getDatabase(initializeApp(firebaseConfig));
-    const LEVELS = ["level0","level2","level3","level4"];
-
-    const LABELS = {
-      'choice-a': 'Empty',
-      'choice-b': 'Moderate',
-      'choice-c': 'Limited',
-      'choice-d': 'Full'
+    const TINTS = {
+      empty: "rgba(34, 197, 94, 0.13)",
+      moderate: "rgba(132, 204, 22, 0.15)",
+      limited: "rgba(245, 158, 11, 0.15)",
+      full: "rgba(239, 68, 68, 0.15)",
+      unknown: "rgba(148, 163, 184, 0.08)"
     };
 
-    function formatTime(iso) {
-      if (!iso) return "--";
-      const d = new Date(iso);
-      return d.toLocaleDateString() + " at " + d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    let roomUpdates = {};
+    let confirmedStatus = {};
+    let latestReport = {};
+    let lastUpdateTime = {};
+    let lastConfirmedChange = {};
+
+    function setupDefaultData() {
+      ROOM_IDS.forEach(roomId => {
+        if (!Array.isArray(roomUpdates[roomId])) roomUpdates[roomId] = [];
+        if (!confirmedStatus[roomId]) confirmedStatus[roomId] = "unknown";
+        if (!latestReport[roomId]) latestReport[roomId] = "unknown";
+        if (!lastUpdateTime[roomId]) lastUpdateTime[roomId] = null;
+        if (!lastConfirmedChange[roomId]) lastConfirmedChange[roomId] = null;
+      });
     }
 
-    function applyToUI(key, value, updatedAt) {
-      const card  = document.getElementById(`card-${key}`);
-      const badge = document.getElementById(`badge-${key}`);
-      const label = document.getElementById(`update-${key}`);
+    function loadSavedData() {
+      roomUpdates = JSON.parse(localStorage.getItem("kcTeamsUpdates") || "{}");
+      confirmedStatus = JSON.parse(localStorage.getItem("kcTeamsConfirmed") || "{}");
+      latestReport = JSON.parse(localStorage.getItem("kcTeamsLatest") || "{}");
+      lastUpdateTime = JSON.parse(localStorage.getItem("kcTeamsLastUpdate") || "{}");
+      lastConfirmedChange = JSON.parse(localStorage.getItem("kcTeamsLastConfirmed") || "{}");
+      setupDefaultData();
+    }
 
-      card.dataset.value = value || "";
+    function saveData() {
+      localStorage.setItem("kcTeamsUpdates", JSON.stringify(roomUpdates));
+      localStorage.setItem("kcTeamsConfirmed", JSON.stringify(confirmedStatus));
+      localStorage.setItem("kcTeamsLatest", JSON.stringify(latestReport));
+      localStorage.setItem("kcTeamsLastUpdate", JSON.stringify(lastUpdateTime));
+      localStorage.setItem("kcTeamsLastConfirmed", JSON.stringify(lastConfirmedChange));
+    }
 
-      // Reset badge classes
-      badge.className = "status-badge";
-      if (value && LABELS[value]) {
-        badge.classList.add(value);
-        badge.textContent = LABELS[value];
-      } else {
-        badge.classList.add("unknown");
-        badge.textContent = "Unknown";
+    function submitStatus(roomId, status) {
+      if (!roomId || !status) return;
+
+      const now = Date.now();
+
+      roomUpdates[roomId].push({ status, timestamp: now });
+      latestReport[roomId] = status;
+      lastUpdateTime[roomId] = now;
+
+      calculateConfirmedStatus(roomId);
+      saveData();
+      renderRoom(roomId);
+    }
+
+    function getRecentUpdates(roomId) {
+      const now = Date.now();
+      return roomUpdates[roomId]
+        .filter(update => now - update.timestamp <= WINDOW_MS)
+        .slice(-MIN_UPDATES);
+    }
+
+    function getDecision(roomId) {
+      const recentUpdates = getRecentUpdates(roomId);
+
+      if (recentUpdates.length < MIN_UPDATES) {
+        return {
+          confidence: 0,
+          changed: false,
+          message: `Waiting for ${MIN_UPDATES - recentUpdates.length} more recent update(s)`
+        };
       }
 
-      if (label) label.textContent = "Last updated: " + (updatedAt ? formatTime(updatedAt) : "--");
+      const counts = { empty: 0, moderate: 0, limited: 0, full: 0 };
+
+      recentUpdates.forEach(update => {
+        counts[update.status] += 1;
+      });
+
+      let strongestStatus = "unknown";
+      let strongestCount = 0;
+
+      Object.keys(counts).forEach(status => {
+        if (counts[status] > strongestCount) {
+          strongestStatus = status;
+          strongestCount = counts[status];
+        }
+      });
+
+      const confidence = strongestCount / recentUpdates.length;
+
+      return {
+        status: strongestStatus,
+        confidence,
+        changed: confidence >= THRESHOLD,
+        message: confidence >= THRESHOLD
+          ? `${strongestCount} of ${recentUpdates.length} recent updates agree`
+          : "No clear agreement yet"
+      };
     }
 
-    onValue(ref(db, "kates-corner/levels"), (snapshot) => {
-      document.getElementById("liveDot").classList.remove("offline");
-      document.getElementById("liveLabel").textContent = "Live";
+    function calculateConfirmedStatus(roomId) {
+      const decision = getDecision(roomId);
 
-      const data = snapshot.val() || {};
-      LEVELS.forEach(key => {
-        const entry = data[key] || {};
-        applyToUI(key, entry.value || "", entry.updatedAt || null);
+      if (decision.changed && confirmedStatus[roomId] !== decision.status) {
+        confirmedStatus[roomId] = decision.status;
+        lastConfirmedChange[roomId] = Date.now();
+      }
+    }
+
+    function renderRoom(roomId) {
+      const card = document.querySelector(`.room-card[data-room-id="${roomId}"]`);
+      const confirmedElement = document.getElementById(`confirmed-${roomId}`);
+      const latestElement = document.getElementById(`latest-report-${roomId}`);
+      const lastUpdateElement = document.getElementById(`last-update-${roomId}`);
+      const lastChangeElement = document.getElementById(`last-change-${roomId}`);
+      const countElement = document.getElementById(`recent-count-${roomId}`);
+      const confidenceElement = document.getElementById(`confidence-${roomId}`);
+      const decisionElement = document.getElementById(`decision-${roomId}`);
+      const listElement = document.getElementById(`recent-list-${roomId}`);
+      const selectElement = document.querySelector(`.status-select[data-room-id="${roomId}"]`);
+
+      const latest = latestReport[roomId] || "unknown";
+      const confirmed = confirmedStatus[roomId] || "unknown";
+      const recent = getRecentUpdates(roomId);
+      const decision = getDecision(roomId);
+
+      if (card) {
+        card.style.setProperty("--side-colour", COLOURS[latest]);
+        card.style.setProperty("--card-tint", TINTS[confirmed]);
+      }
+
+      if (confirmedElement) {
+        confirmedElement.textContent = getStatusText(confirmed);
+        confirmedElement.className = `badge ${confirmed}`;
+      }
+
+      if (latestElement) {
+        latestElement.textContent = latest === "unknown" ? "--" : getStatusText(latest);
+        latestElement.className = `badge ${latest}`;
+      }
+
+      if (lastUpdateElement) {
+        lastUpdateElement.textContent = lastUpdateTime[roomId] ? formatTime(lastUpdateTime[roomId]) : "--";
+      }
+
+      if (lastChangeElement) {
+        lastChangeElement.textContent = lastConfirmedChange[roomId] ? formatTime(lastConfirmedChange[roomId]) : "--";
+      }
+
+      if (countElement) {
+        countElement.textContent = `${recent.length}/${MIN_UPDATES}`;
+      }
+
+      if (confidenceElement) {
+        confidenceElement.textContent = `${Math.round(decision.confidence * 100)}%`;
+      }
+
+      if (decisionElement) {
+        decisionElement.textContent = decision.message;
+        decisionElement.className = decision.changed ? "decision-text changed" : "decision-text";
+      }
+
+      if (listElement) {
+        listElement.innerHTML = "";
+        recent.slice().reverse().forEach(update => {
+          const li = document.createElement("li");
+          li.innerHTML = `<span class="badge ${update.status}">${getStatusText(update.status)}</span> reported at ${formatTime(update.timestamp)}`;
+          listElement.appendChild(li);
+        });
+      }
+
+      if (selectElement) {
+        selectElement.value = "";
+      }
+    }
+
+    function renderAllRooms() {
+      ROOM_IDS.forEach(renderRoom);
+    }
+
+    function getStatusText(status) {
+      const labels = {
+        empty: "Empty",
+        moderate: "Moderate",
+        limited: "Limited",
+        full: "Full",
+        unknown: "Unknown"
+      };
+      return labels[status] || "Unknown";
+    }
+
+    function formatTime(timestamp) {
+      return new Date(timestamp).toLocaleString("en-NZ", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
       });
-    }, () => {
-      document.getElementById("liveDot").classList.add("offline");
-      document.getElementById("liveLabel").textContent = "Offline";
-    });
+    }
+
+    function updateCurrentTime() {
+      const currentTimeElement = document.getElementById("currentTime");
+      if (!currentTimeElement) return;
+
+      currentTimeElement.textContent = new Date().toLocaleString("en-NZ", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      });
+    }
+
+    function resetData() {
+      localStorage.removeItem("kcTeamsUpdates");
+      localStorage.removeItem("kcTeamsConfirmed");
+      localStorage.removeItem("kcTeamsLatest");
+      localStorage.removeItem("kcTeamsLastUpdate");
+      localStorage.removeItem("kcTeamsLastConfirmed");
+
+      roomUpdates = {};
+      confirmedStatus = {};
+      latestReport = {};
+      lastUpdateTime = {};
+      lastConfirmedChange = {};
+
+      setupDefaultData();
+      saveData();
+      renderAllRooms();
+    }
+
+    function setupEvents() {
+      document.querySelectorAll(".status-select").forEach(select => {
+        select.addEventListener("change", event => {
+          submitStatus(event.target.dataset.roomId, event.target.value);
+        });
+      });
+
+      document.querySelectorAll(".status-row button").forEach(button => {
+        button.addEventListener("click", event => {
+          submitStatus(event.target.dataset.roomId, event.target.dataset.status);
+        });
+      });
+
+      document.getElementById("resetDataButton").addEventListener("click", resetData);
+    }
+
+    loadSavedData();
+    setupEvents();
+    renderAllRooms();
+    updateCurrentTime();
+
+    setInterval(updateCurrentTime, 1000);
   </script>
 </body>
 </html>
