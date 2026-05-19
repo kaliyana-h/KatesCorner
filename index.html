@@ -120,10 +120,14 @@
 
     .intro-box {
       width: min(600px, calc(100vw - 32px)); margin: 28px auto 0;
-      background: #eef4fb; border: 1px solid #cddcee;
-      border-radius: 14px; padding: 14px 20px;
-      color: #2e4a66; font-size: 14px; line-height: 1.55;
+      background: #eef4fb; border-left: 4px solid var(--navy);
+      border-radius: 10px; padding: 16px 20px;
+      display: flex; flex-direction: column; gap: 8px;
     }
+    .intro-tagline { font-size: 17px; font-weight: 700; color: var(--navy); margin: 0; text-align: center; white-space: nowrap; }
+    .intro-desc { font-size: 14px; color: var(--text); line-height: 1.6; margin: 0; }
+    .intro-rule { font-size: 13.5px; color: #2c3e50; line-height: 1.6; margin: 0; }
+    .intro-rule strong { color: var(--navy); }
 
     .disclaimer { position: absolute; left: 44px; bottom: 38px; color: #536476; font-size: 13px; }
 
@@ -207,13 +211,9 @@
     </div>
 
     <div class="intro-box">
-      <div style="text-align:center;font-size:16px;font-weight:800;line-height:1.5;color:#003b73;margin-bottom:10px;">
-        Live busyness status — updated by students on each floor
-      </div>
-      <div style="text-align:center;font-size:15px;line-height:1.8;color:#425466;">
-        Scan the QR code on each floor to report how busy it is.
-        This page updates in real time as students check in.
-      </div>
+      <p class="intro-tagline">Need a seat? Check the space. Found one? Share the status.</p>
+      <p class="intro-desc">Real-time updates from students help everyone find a better place to study.</p>
+      <p class="intro-rule"><strong>Update rule:</strong> Your selection is recorded instantly. The displayed status updates when <strong>2 of the last 3 reports</strong> agree.</p>
     </div>
 
     <section class="levels">
