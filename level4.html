@@ -30,9 +30,25 @@
       box-shadow: 0 8px 15px rgba(0, 59, 115, 0.22);
     }
     .title { margin: 0; color: var(--navy); font-size: 28px; line-height: 1; font-weight: 800; }
-    .subtitle { margin: 8px 0 0; color: var(--muted); font-size: 15px; }
+    .subtitle { margin: 6px 0 0; color: var(--muted); font-size: 15px; }
 
-    .levels { width: min(565px, calc(100vw - 48px)); margin: 67px auto 0; display: flex; flex-direction: column; gap: 14px; }
+    .intro-block {
+      width: min(620px, calc(100vw - 48px));
+      margin: 28px auto 0;
+      background: #eef4fb;
+      border-left: 4px solid var(--navy);
+      border-radius: 10px;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .intro-tagline { font-size: 17px; font-weight: 700; color: var(--navy); margin: 0; text-align: center; white-space: nowrap; }
+    .intro-desc { font-size: 14px; color: var(--text); line-height: 1.6; margin: 0; }
+    .intro-rule { font-size: 13.5px; color: #2c3e50; line-height: 1.6; margin: 0; }
+    .intro-rule strong { color: var(--navy); }
+
+    .levels { width: min(620px, calc(100vw - 48px)); margin: 28px auto 0; display: flex; flex-direction: column; gap: 14px; }
     .card {
       min-height: 112px; border-radius: 34px;
       background: var(--card-bg); border: 1px solid var(--border);
@@ -41,7 +57,6 @@
       gap: 24px; padding: 0 37px 0 70px; position: relative; overflow: hidden; transition: 0.25s ease;
     }
     .card::before { content: ""; position: absolute; left: 0; top: 0; width: 14px; height: 100%; background: var(--neutral); transition: 0.25s ease; }
-    
     .card:has(select option[value="choice-a"]:checked)::before { background: var(--choice-a); }
     .card:has(select option[value="choice-b"]:checked)::before { background: var(--choice-b); }
     .card:has(select option[value="choice-c"]:checked)::before { background: var(--choice-c); }
@@ -53,19 +68,18 @@
 
     .card-title { font-size: 16px; color: #24384d; font-weight: 600; letter-spacing: 0.2px; white-space: nowrap; }
     .level-select {
-      min-width: 145px; border: 1px solid #b9b9b9; border-radius: 6px;
+      min-width: 230px; border: 1px solid #b9b9b9; border-radius: 6px;
       background: linear-gradient(#f4f4f4, #dcdcdc); color: #202124;
-      font-size: 14px; font-weight: 700; padding: 8px 10px; cursor: pointer;
+      font-size: 13.5px; font-weight: 700; padding: 8px 10px; cursor: pointer;
       box-shadow: 0 2px 5px rgba(0,0,0,0.18);
     }
     .level-select:hover { background: linear-gradient(#ffffff, #e8e8e8); }
-
     option[value="choice-a"] { color: #15803d; font-weight: bold; }
     option[value="choice-b"] { color: #4a7a00; font-weight: bold; }
     option[value="choice-c"] { color: #c2410c; font-weight: bold; }
     option[value="choice-d"] { color: #b91c1c; font-weight: bold; }
 
-    .legend { display: flex; justify-content: center; gap: 16px; margin-top: 35px; }
+    .legend { display: flex; justify-content: center; gap: 16px; margin-top: 28px; }
     .legend-item { background: #ffffff; border-radius: 6px; padding: 8px 11px; display: flex; align-items: center; gap: 8px; color: #334155; font-size: 14px; box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04); }
     .dot { width: 15px; height: 15px; border-radius: 4px; display: inline-block; }
     .dot.choice-a { background: var(--choice-a); }
@@ -76,7 +90,6 @@
     .status-msg { text-align: center; margin-top: 15px; font-size: 14px; font-weight: bold; color: #15803d; min-height: 20px; }
     .disclaimer { position: absolute; left: 44px; bottom: 38px; color: #536476; font-size: 13px; }
 
-    /* Big Back Button layout styling setup */
     .big-back-btn {
       display: block; text-align: center; text-decoration: none;
       font-family: Arial, Helvetica, sans-serif; font-size: 18px; font-weight: bold;
@@ -89,7 +102,7 @@
     @media (max-width: 680px) {
       .page { padding: 28px 20px; }
       .header { align-items: flex-start; }
-      .levels { margin-top: 50px; }
+      .levels { margin-top: 24px; }
       .card { padding: 24px; border-radius: 24px; flex-direction: column; gap: 18px; text-align: center; }
       .card-title { white-space: normal; }
       .legend { flex-wrap: wrap; }
@@ -110,15 +123,21 @@
       </div>
     </header>
 
+    <div class="intro-block">
+      <p class="intro-tagline">Need a seat? Check the space. Found one? Share the status.</p>
+      <p class="intro-desc">Real-time updates from students help everyone find a better place to study.</p>
+      <p class="intro-rule"><strong>Update rule:</strong> Your selection is recorded instantly. The displayed status updates when <strong>2 of the last 3 reports</strong> agree.</p>
+    </div>
+
     <section class="levels">
       <div class="card">
         <span class="card-title">Level 4 – Silent Study Space</span>
         <select class="level-select" id="statusSelect">
           <option value="">Choose one...</option>
-          <option value="choice-a">Empty</option>
-          <option value="choice-b">Moderate</option>
-          <option value="choice-c">Limited</option>
-          <option value="choice-d">Full</option>
+          <option value="choice-a">Empty – Very easy to find seats</option>
+          <option value="choice-b">Moderate – Quite easy to find seats</option>
+          <option value="choice-c">Limited – Might be difficult to find seats</option>
+          <option value="choice-d">Full – Basically no seats left</option>
         </select>
       </div>
       <div class="status-msg" id="statusMsg"></div>
@@ -150,21 +169,17 @@
     };
 
     const db = getDatabase(initializeApp(firebaseConfig));
-    
-    // IMPORTANT: Swap out "level0" here inside level2.html, level3.html, level4.html
-    const floorKey = "level4"; 
+    const floorKey = "level4";
 
     const selectEl = document.getElementById("statusSelect");
     const msgEl = document.getElementById("statusMsg");
 
-    // Clear dropdown selector cleanly on load to enforce brand new choices
     selectEl.value = "";
 
     selectEl.addEventListener("change", (e) => {
       const val = e.target.value;
-      if (!val) return; // Ignore fallback to blank selection
-      
-      // Fix: Append a new historical data object path, instead of overwriting a single value
+      if (!val) return;
+
       push(ref(db, `kates-corner/history/${floorKey}`), {
         value: val,
         updatedAt: new Date().toISOString()
