@@ -76,7 +76,9 @@
 
     .card-info { display: flex; flex-direction: column; gap: 8px; flex: 1 1 auto; }
     .card-title { font-size: 16px; color: #24384d; font-weight: 600; letter-spacing: 0.2px; }
-    
+
+    .card-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
     .update-btn {
       align-self: flex-start;
       font-size: 12px; font-weight: 700; color: var(--navy);
@@ -85,6 +87,18 @@
       transition: all 0.2s ease;
     }
     .update-btn:hover { background: #dcecff; transform: translateY(-1px); }
+
+    /* Noise indicator — shown only on Level 3 and Level 4 */
+    .noise-indicator {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11px; font-weight: 600;
+      padding: 3px 9px; border-radius: 10px;
+      color: #94a3b8; background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      transition: 0.2s ease;
+    }
+    .noise-indicator.quiet { color: #15803d; background: #f0fdf4; border-color: #bbf7d0; }
+    .noise-indicator.noisy { color: #b45309; background: #fffbeb; border-color: #fde68a; }
 
     .status-badge {
       flex: 0 0 auto;
@@ -217,41 +231,57 @@
     </div>
 
     <section class="levels">
+
+      <!-- Level 0 — no noise indicator -->
       <div class="card" id="card-level0" data-value="">
         <div class="card-info">
           <span class="card-title">Level 0 – Collaborative Study Space</span>
-          <a href="level0.html" class="update-btn">Update Status</a>
+          <div class="card-actions">
+            <a href="level0.html" class="update-btn">Update Status</a>
+          </div>
         </div>
         <span class="status-badge unknown" id="badge-level0">Unknown</span>
       </div>
       <div class="level-update" id="update-level0">Last updated: --</div>
 
+      <!-- Level 2 — no noise indicator -->
       <div class="card" id="card-level2" data-value="">
         <div class="card-info">
           <span class="card-title">Level 2 – Collaborative Study Space</span>
-          <a href="level2.html" class="update-btn">Update Status</a>
+          <div class="card-actions">
+            <a href="level2.html" class="update-btn">Update Status</a>
+          </div>
         </div>
         <span class="status-badge unknown" id="badge-level2">Unknown</span>
       </div>
       <div class="level-update" id="update-level2">Last updated: --</div>
 
+      <!-- Level 3 — with noise indicator -->
       <div class="card" id="card-level3" data-value="">
         <div class="card-info">
           <span class="card-title">Level 3 – Quiet Study Space</span>
-          <a href="level3.html" class="update-btn">Update Status</a>
+          <div class="card-actions">
+            <a href="level3.html" class="update-btn">Update Status</a>
+            <span class="noise-indicator" id="noise-level3">🔇 –</span>
+          </div>
         </div>
         <span class="status-badge unknown" id="badge-level3">Unknown</span>
       </div>
       <div class="level-update" id="update-level3">Last updated: --</div>
 
+      <!-- Level 4 — with noise indicator -->
       <div class="card" id="card-level4" data-value="">
         <div class="card-info">
           <span class="card-title">Level 4 – Silent Study Space</span>
-          <a href="level4.html" class="update-btn">Update Status</a>
+          <div class="card-actions">
+            <a href="level4.html" class="update-btn">Update Status</a>
+            <span class="noise-indicator" id="noise-level4">🔇 –</span>
+          </div>
         </div>
         <span class="status-badge unknown" id="badge-level4">Unknown</span>
       </div>
       <div class="level-update" id="update-level4">Last updated: --</div>
+
     </section>
 
     <div class="legend">
@@ -329,6 +359,7 @@
 
     const db = getDatabase(initializeApp(firebaseConfig));
     const LEVELS = ["level0","level2","level3","level4"];
+    const NOISE_LEVELS = ["level3","level4"];
     const LABELS = { 'choice-a': 'Empty', 'choice-b': 'Moderate', 'choice-c': 'Limited', 'choice-d': 'Full' };
 
     function formatTime(iso) {
@@ -337,72 +368,72 @@
       return d.toLocaleDateString() + " at " + d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
     }
 
-    // Process rolling history node logic cleanly
     function calculateConsensus(historyArray) {
       if (!historyArray || historyArray.length < 3) return null;
-      
-      // Grab the absolute last 3 submissions made
       const sample = historyArray.slice(-3);
       const counts = {};
-      
-      sample.forEach(item => {
-        if(item.value) counts[item.value] = (counts[item.value] || 0) + 1;
-      });
+      sample.forEach(item => { if(item.value) counts[item.value] = (counts[item.value] || 0) + 1; });
+      let topChoice = null, topCount = 0;
+      Object.keys(counts).forEach(key => { if (counts[key] > topCount) { topChoice = key; topCount = counts[key]; } });
+      return (topCount / 3) >= 0.6 ? topChoice : null;
+    }
 
-      let topChoice = null;
-      let topCount = 0;
-      Object.keys(counts).forEach(key => {
-        if (counts[key] > topCount) {
-          topChoice = key;
-          topCount = counts[key];
-        }
-      });
-
-      // Confirm status if confidence is at least 60% (2 out of 3 matches minimum)
-      if ((topCount / 3) >= 0.6) {
-        return topChoice;
-      }
-      return null;
+    // Noise only needs 2 reports to agree (simpler — binary choice)
+    function calculateNoise(historyArray) {
+      if (!historyArray || historyArray.length < 2) return null;
+      const sample = historyArray.slice(-3);
+      const counts = {};
+      sample.forEach(item => { if(item.value) counts[item.value] = (counts[item.value] || 0) + 1; });
+      let top = null, topCount = 0;
+      Object.keys(counts).forEach(k => { if (counts[k] > topCount) { top = k; topCount = counts[k]; } });
+      return (topCount / sample.length) >= 0.6 ? top : null;
     }
 
     function applyToUI(key, value, updatedAt) {
       const card  = document.getElementById(`card-${key}`);
       const badge = document.getElementById(`badge-${key}`);
       const label = document.getElementById(`update-${key}`);
-
       card.dataset.value = value || "";
       badge.className = "status-badge";
-
-      if (value && LABELS[value]) {
-        badge.classList.add(value);
-        badge.textContent = LABELS[value];
-      } else {
-        badge.classList.add("unknown");
-        badge.textContent = "Unknown";
-      }
+      if (value && LABELS[value]) { badge.classList.add(value); badge.textContent = LABELS[value]; }
+      else { badge.classList.add("unknown"); badge.textContent = "Unknown"; }
       if (label) label.textContent = "Last updated: " + (updatedAt ? formatTime(updatedAt) : "--");
     }
 
-    // Listen to the live, multi-node log trail entries
+    function applyNoiseToUI(key, value) {
+      const el = document.getElementById(`noise-${key}`);
+      if (!el) return;
+      el.className = 'noise-indicator';
+      if (value === 'quiet')      { el.classList.add('quiet'); el.textContent = '🔇 Quiet'; }
+      else if (value === 'noisy') { el.classList.add('noisy'); el.textContent = '🔊 Noisy'; }
+      else                        { el.textContent = '🔇 –'; }
+    }
+
+    // Listen to availability history
     onValue(ref(db, "kates-corner/history"), (snapshot) => {
       document.getElementById("liveDot").classList.remove("offline");
       document.getElementById("liveLabel").textContent = "Live";
-
       const historyData = snapshot.val() || {};
-
       LEVELS.forEach(key => {
         const roomHistoryRaw = historyData[key] || {};
-        // Convert map tracking object entries into a manageable list sorted chronologically
         const historyList = Object.values(roomHistoryRaw).sort((a,b) => new Date(a.updatedAt) - new Date(b.updatedAt));
-        
         const confirmedValue = calculateConsensus(historyList);
         const latestEntry = historyList[historyList.length - 1] || {};
-
         applyToUI(key, confirmedValue, latestEntry.updatedAt || null);
       });
     }, () => {
       document.getElementById("liveDot").classList.add("offline");
       document.getElementById("liveLabel").textContent = "Offline";
+    });
+
+    // Listen to noise history (level 3 and 4 only)
+    onValue(ref(db, "kates-corner/noise"), (snapshot) => {
+      const noiseData = snapshot.val() || {};
+      NOISE_LEVELS.forEach(key => {
+        const roomNoiseRaw = noiseData[key] || {};
+        const noiseList = Object.values(roomNoiseRaw).sort((a,b) => new Date(a.updatedAt) - new Date(b.updatedAt));
+        applyNoiseToUI(key, calculateNoise(noiseList));
+      });
     });
   </script>
 </body>

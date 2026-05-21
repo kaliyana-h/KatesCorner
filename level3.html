@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kate's Corner – Update Form</title>
+  <title>Kate's Corner – Level 3</title>
   <style>
     :root {
       --navy: #003b73;
@@ -27,131 +27,193 @@
       background: var(--navy); color: white;
       display: grid; place-items: center;
       font-weight: 700; letter-spacing: 0.5px;
-      box-shadow: 0 8px 15px rgba(0, 59, 115, 0.22);
+      box-shadow: 0 8px 15px rgba(0,59,115,0.22);
+      text-decoration: none;
     }
     .title { margin: 0; color: var(--navy); font-size: 28px; line-height: 1; font-weight: 800; }
-    .subtitle { margin: 6px 0 0; color: var(--muted); font-size: 15px; }
+    .subtitle { margin: 8px 0 0; color: var(--muted); font-size: 15px; }
 
-    .intro-block {
-      width: min(620px, calc(100vw - 48px));
-      margin: 28px auto 0;
-      background: #eef4fb;
-      border-left: 4px solid var(--navy);
-      border-radius: 10px;
-      padding: 16px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+    .form-wrap {
+      width: min(600px, calc(100vw - 32px));
+      margin: 50px auto 0;
+      display: flex; flex-direction: column; gap: 20px;
     }
-    .intro-tagline { font-size: 17px; font-weight: 700; color: var(--navy); margin: 0; text-align: center; }
-    .intro-desc { font-size: 14px; color: var(--text); line-height: 1.6; margin: 0; }
-    .intro-rule { font-size: 13.5px; color: #2c3e50; line-height: 1.6; margin: 0; }
-    .intro-rule strong { color: var(--navy); }
 
-    .levels { width: min(620px, calc(100vw - 48px)); margin: 28px auto 0; display: flex; flex-direction: column; gap: 14px; }
+    /* Availability card */
     .card {
-      min-height: 112px; border-radius: 34px;
+      min-height: 90px; border-radius: 34px;
       background: var(--card-bg); border: 1px solid var(--border);
-      box-shadow: 0 18px 35px rgba(15, 23, 42, 0.08);
+      box-shadow: 0 18px 35px rgba(15,23,42,0.08);
       display: flex; align-items: center; justify-content: space-between;
-      gap: 24px; padding: 0 37px 0 70px; position: relative; overflow: hidden; transition: 0.25s ease;
+      flex-wrap: wrap; gap: 16px; padding: 20px 28px 20px 44px;
+      position: relative; overflow: hidden; transition: 0.25s ease;
     }
-    .card::before { content: ""; position: absolute; left: 0; top: 0; width: 14px; height: 100%; background: var(--neutral); transition: 0.25s ease; }
-    .card:has(select option[value="choice-a"]:checked)::before { background: var(--choice-a); }
-    .card:has(select option[value="choice-b"]:checked)::before { background: var(--choice-b); }
-    .card:has(select option[value="choice-c"]:checked)::before { background: var(--choice-c); }
-    .card:has(select option[value="choice-d"]:checked)::before { background: var(--choice-d); }
-    .card:has(select option[value="choice-a"]:checked) { box-shadow: 0 18px 35px rgba(46, 204, 113, 0.16); }
-    .card:has(select option[value="choice-b"]:checked) { box-shadow: 0 18px 35px rgba(168, 217, 74, 0.20); }
-    .card:has(select option[value="choice-c"]:checked) { box-shadow: 0 18px 35px rgba(245, 166, 35, 0.18); }
-    .card:has(select option[value="choice-d"]:checked) { box-shadow: 0 18px 35px rgba(239, 68, 68, 0.18); }
+    .card::before {
+      content: ""; position: absolute; left: 0; top: 0;
+      width: 14px; height: 100%; background: var(--neutral); transition: background 0.25s ease;
+    }
+    .card.sel-a::before { background: var(--choice-a); }
+    .card.sel-b::before { background: var(--choice-b); }
+    .card.sel-c::before { background: var(--choice-c); }
+    .card.sel-d::before { background: var(--choice-d); }
+    .card.sel-a { box-shadow: 0 18px 35px rgba(46,204,113,0.16); }
+    .card.sel-b { box-shadow: 0 18px 35px rgba(168,217,74,0.20); }
+    .card.sel-c { box-shadow: 0 18px 35px rgba(245,166,35,0.18); }
+    .card.sel-d { box-shadow: 0 18px 35px rgba(239,68,68,0.18); }
 
-    .card-title { font-size: 16px; color: #24384d; font-weight: 600; letter-spacing: 0.2px; white-space: nowrap; }
+    .card-title { font-size: 16px; color: #9aa5b1; letter-spacing: 0.2px; flex: 1 1 auto; }
+
     .level-select {
-      min-width: 230px; border: 1px solid #b9b9b9; border-radius: 6px;
-      background: linear-gradient(#f4f4f4, #dcdcdc); color: #202124;
-      font-size: 13.5px; font-weight: 700; padding: 8px 10px; cursor: pointer;
+      flex: 0 0 auto;
+      border: 1px solid #b9b9b9; border-radius: 6px;
+      background: linear-gradient(#f4f4f4, #dcdcdc);
+      color: #202124; font-size: 14px; font-weight: 700;
+      padding: 8px 10px; cursor: pointer;
       box-shadow: 0 2px 5px rgba(0,0,0,0.18);
     }
     .level-select:hover { background: linear-gradient(#ffffff, #e8e8e8); }
-    option[value="choice-a"] { color: #15803d; font-weight: bold; }
-    option[value="choice-b"] { color: #4a7a00; font-weight: bold; }
-    option[value="choice-c"] { color: #c2410c; font-weight: bold; }
-    option[value="choice-d"] { color: #b91c1c; font-weight: bold; }
+    .level-select.sel-a { color: #1a7a40; }
+    .level-select.sel-b { color: #5a7a00; }
+    .level-select.sel-c { color: #b87900; }
+    .level-select.sel-d { color: #c62828; }
+    option[value="choice-a"] { color: #1a7a40; font-weight: bold; }
+    option[value="choice-b"] { color: #5a7a00; font-weight: bold; }
+    option[value="choice-c"] { color: #b87900; font-weight: bold; }
+    option[value="choice-d"] { color: #c62828; font-weight: bold; }
 
-    .legend { display: flex; justify-content: center; gap: 16px; margin-top: 28px; }
-    .legend-item { background: #ffffff; border-radius: 6px; padding: 8px 11px; display: flex; align-items: center; gap: 8px; color: #334155; font-size: 14px; box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04); }
-    .dot { width: 15px; height: 15px; border-radius: 4px; display: inline-block; }
-    .dot.choice-a { background: var(--choice-a); }
-    .dot.choice-b { background: var(--choice-b); }
-    .dot.choice-c { background: var(--choice-c); }
-    .dot.choice-d { background: var(--choice-d); }
-
-    .status-msg { text-align: center; margin-top: 15px; font-size: 14px; font-weight: bold; color: #15803d; min-height: 20px; }
-    .disclaimer { position: absolute; left: 44px; bottom: 38px; color: #536476; font-size: 13px; }
-
-    .big-back-btn {
-      display: block; text-align: center; text-decoration: none;
-      font-family: Arial, Helvetica, sans-serif; font-size: 18px; font-weight: bold;
-      color: #ffffff; background-color: var(--navy); padding: 15px 30px;
-      border-radius: 12px; margin: 20px auto; max-width: 500px;
-      box-shadow: 0 4px 12px rgba(0,59,115,0.2); transition: background-color 0.2s;
+    /* Noise question */
+    .noise-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 20px; padding: 18px 28px;
+      box-shadow: 0 8px 20px rgba(15,23,42,0.06);
+      display: flex; flex-direction: column; gap: 12px;
     }
-    .big-back-btn:hover { background-color: #00274d; }
+    .noise-label {
+      font-size: 14px; font-weight: 700; color: var(--navy);
+    }
+    .noise-label span {
+      font-size: 12px; font-weight: 400; color: var(--muted); margin-left: 6px;
+    }
+    .noise-options { display: flex; gap: 10px; }
+    .noise-btn {
+      flex: 1; padding: 10px; border-radius: 12px; cursor: pointer;
+      font-size: 14px; font-weight: 700; border: 2px solid var(--border);
+      background: var(--card-bg); color: var(--muted);
+      transition: 0.2s ease;
+    }
+    .noise-btn:hover { border-color: #94a3b8; color: var(--text); }
+    .noise-btn.active-quiet { border-color: #22c55e; background: #f0fdf4; color: #15803d; }
+    .noise-btn.active-noisy { border-color: #f59e0b; background: #fffbeb; color: #b45309; }
 
-    @media (max-width: 680px) {
-      .page { padding: 28px 20px; }
-      .header { align-items: flex-start; }
-      .levels { margin-top: 24px; }
-      .card { padding: 24px; border-radius: 24px; flex-direction: column; gap: 18px; text-align: center; }
-      .card-title { white-space: normal; }
-      .legend { flex-wrap: wrap; }
-      .disclaimer { position: static; margin-top: 35px; }
+    /* Submit */
+    .submit-btn {
+      width: 100%; padding: 14px;
+      background: var(--navy); color: white;
+      border: none; border-radius: 16px;
+      font-size: 15px; font-weight: 700; cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0,59,115,0.2);
+      transition: 0.2s ease;
+    }
+    .submit-btn:hover { background: #00509e; transform: translateY(-1px); }
+    .submit-btn:disabled { background: #94a3b8; cursor: not-allowed; transform: none; }
+
+    .feedback-msg {
+      text-align: center; font-size: 14px; font-weight: 600;
+      color: #15803d; display: none; padding: 8px;
+    }
+
+    .back-link {
+      display: inline-block; margin-top: 24px;
+      color: var(--navy); font-size: 14px;
+      text-decoration: none; opacity: 0.7;
+    }
+    .back-link:hover { opacity: 1; }
+
+    .disclaimer { margin-top: 24px; color: #536476; font-size: 13px; }
+
+    @media (max-width: 500px) {
+      .page { padding: 28px 16px; }
+      .form-wrap { margin-top: 40px; }
+      .card { padding: 20px 20px 20px 36px; border-radius: 24px; }
+      .level-select { width: 100%; }
     }
   </style>
 </head>
 <body>
-
-  <a href="index.html" class="big-back-btn">← Back to Statuses</a>
-
   <main class="page">
     <header class="header">
-      <div class="logo">KC</div>
+      <a class="logo" href="index.html" aria-label="Back to all levels">KC</a>
       <div>
         <h1 class="title">Kate's Corner</h1>
-        <p class="subtitle">Update busyness status for this floor</p>
+        <p class="subtitle">A quick peek at how busy Kate Edger's study rooms are</p>
       </div>
     </header>
 
-    <div class="intro-block">
-      <p class="intro-tagline">Need a seat? Check the space. Found one? Share the status.</p>
-      <p class="intro-desc">Real-time updates from students help everyone find a better place to study.</p>
-      <p class="intro-rule"><strong>Update rule:</strong> Your selection is recorded instantly. The displayed status updates when <strong>2 of the last 3 reports</strong> agree.</p>
-    </div>
+    <div class="form-wrap">
 
-    <section class="levels">
-      <div class="card">
+      <!-- Availability -->
+      <div class="card" id="statusCard">
         <span class="card-title">Level 3 – Quiet Study Space</span>
-        <select class="level-select" id="statusSelect">
-          <option value="">Choose one...</option>
+        <select class="level-select" id="availSelect" aria-label="Level 3 – Quiet Study Space availability">
+          <option value="">How busy is it?</option>
           <option value="choice-a">Empty – Very easy to find seats</option>
           <option value="choice-b">Moderate – Quite easy to find seats</option>
           <option value="choice-c">Limited – Might be difficult to find seats</option>
           <option value="choice-d">Full – Basically no seats left</option>
         </select>
       </div>
-      <div class="status-msg" id="statusMsg"></div>
-    </section>
 
-    <div class="legend">
-      <div class="legend-item"><span class="dot choice-a"></span>Empty</div>
-      <div class="legend-item"><span class="dot choice-b"></span>Moderate</div>
-      <div class="legend-item"><span class="dot choice-c"></span>Limited</div>
-      <div class="legend-item"><span class="dot choice-d"></span>Full</div>
+      <!-- Noise level -->
+      <div class="noise-card">
+        <div class="noise-label">
+          How's the noise level?
+          <span>optional</span>
+        </div>
+        <div class="noise-options">
+          <button class="noise-btn" id="btnQuiet" type="button">🔇 Quiet</button>
+          <button class="noise-btn" id="btnNoisy" type="button">🔊 Noisy</button>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <button class="submit-btn" id="submitBtn" disabled>Submit</button>
+      <div class="feedback-msg" id="feedbackMsg">✓ Thanks! Your update has been recorded.</div>
+
+      <a class="back-link" href="index.html">← Back to all levels</a>
+      <p class="disclaimer">Status updates are approximate.</p>
     </div>
-
-    <div class="disclaimer">Status updates are approximate and submitted by students.</div>
   </main>
+
+  <script>
+    // Noise button toggle
+    let noiseValue = null;
+    const btnQuiet = document.getElementById('btnQuiet');
+    const btnNoisy = document.getElementById('btnNoisy');
+
+    btnQuiet.addEventListener('click', () => {
+      noiseValue = noiseValue === 'quiet' ? null : 'quiet';
+      btnQuiet.className = 'noise-btn' + (noiseValue === 'quiet' ? ' active-quiet' : '');
+      btnNoisy.className = 'noise-btn';
+    });
+    btnNoisy.addEventListener('click', () => {
+      noiseValue = noiseValue === 'noisy' ? null : 'noisy';
+      btnNoisy.className = 'noise-btn' + (noiseValue === 'noisy' ? ' active-noisy' : '');
+      btnQuiet.className = 'noise-btn';
+    });
+
+    // Availability dropdown colour
+    const availSelect = document.getElementById('availSelect');
+    const statusCard  = document.getElementById('statusCard');
+    const submitBtn   = document.getElementById('submitBtn');
+    const colourMap   = { 'choice-a':'sel-a', 'choice-b':'sel-b', 'choice-c':'sel-c', 'choice-d':'sel-d' };
+
+    availSelect.addEventListener('change', () => {
+      Object.values(colourMap).forEach(c => { availSelect.classList.remove(c); statusCard.classList.remove(c); });
+      const cls = colourMap[availSelect.value];
+      if (cls) { availSelect.classList.add(cls); statusCard.classList.add(cls); }
+      submitBtn.disabled = !availSelect.value;
+    });
+  </script>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -169,31 +231,51 @@
     };
 
     const db = getDatabase(initializeApp(firebaseConfig));
-    const floorKey = "level3";
+    const ROOM_KEY = "level3";
 
-    const selectEl = document.getElementById("statusSelect");
-    const msgEl = document.getElementById("statusMsg");
+    document.getElementById('submitBtn').addEventListener('click', async () => {
+      const availValue = document.getElementById('availSelect').value;
+      if (!availValue) return;
 
-    selectEl.value = "";
+      const now = new Date().toISOString();
+      const submitBtn   = document.getElementById('submitBtn');
+      const feedbackMsg = document.getElementById('feedbackMsg');
 
-    selectEl.addEventListener("change", (e) => {
-      const val = e.target.value;
-      if (!val) return;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting…';
 
-      push(ref(db, `kates-corner/history/${floorKey}`), {
-        value: val,
-        updatedAt: new Date().toISOString()
-      })
-      .then(() => {
-        msgEl.style.color = "#15803d";
-        msgEl.textContent = "Status updated successfully!";
-        setTimeout(() => { msgEl.textContent = ""; }, 3000);
-      })
-      .catch((err) => {
-        msgEl.style.color = "#b91c1c";
-        msgEl.textContent = "Error saving update.";
+      try {
+        // Always write availability
+        await push(ref(db, `kates-corner/history/${ROOM_KEY}`), {
+          value: availValue,
+          updatedAt: now
+        });
+
+        // Write noise only if the student chose one
+        if (window.noiseValue) {
+          await push(ref(db, `kates-corner/noise/${ROOM_KEY}`), {
+            value: window.noiseValue,
+            updatedAt: now
+          });
+        }
+
+        feedbackMsg.style.display = 'block';
+        submitBtn.textContent = 'Submitted ✓';
+
+        setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+
+      } catch (err) {
         console.error(err);
-      });
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit';
+        alert('Something went wrong — please try again.');
+      }
+    });
+
+    // Expose noiseValue to module scope
+    Object.defineProperty(window, 'noiseValue', {
+      get: () => noiseValue,
+      configurable: true
     });
   </script>
 </body>
