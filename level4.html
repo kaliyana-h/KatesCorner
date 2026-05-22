@@ -137,9 +137,35 @@
       .card { padding: 20px 20px 20px 36px; border-radius: 24px; }
       .level-select { width: 100%; }
     }
+  
+    .big-back-btn {
+      display: block; text-align: center; text-decoration: none;
+      font-family: Arial, Helvetica, sans-serif; font-size: 18px; font-weight: bold;
+      color: #ffffff; background-color: var(--navy); padding: 15px 30px;
+      border-radius: 12px; margin: 20px auto; max-width: 500px;
+      box-shadow: 0 4px 12px rgba(0,59,115,0.2); transition: background-color 0.2s;
+    }
+    .big-back-btn:hover { background-color: #00274d; }
+
+    .intro-block {
+      width: min(620px, calc(100vw - 48px));
+      margin: 28px auto 0;
+      background: #eef4fb;
+      border-left: 4px solid var(--navy);
+      border-radius: 10px;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .intro-rule { font-size: 13.5px; color: #2c3e50; line-height: 1.6; margin: 0; }
+
   </style>
 </head>
 <body>
+  
+  <a href="index.html" class="big-back-btn">← Back to Statuses</a>
+
   <main class="page">
     <header class="header">
       <a class="logo" href="index.html" aria-label="Back to all levels">KC</a>
@@ -148,6 +174,10 @@
         <p class="subtitle">A quick peek at how busy Kate Edger's study rooms are</p>
       </div>
     </header>
+
+    <div class="intro-block">
+      <p class="intro-rule"><strong>Update rule:</strong> Your selection is recorded instantly. The displayed status updates when <strong>2 of the last 3 reports</strong> agree.<br>Your privacy is protected. No personally identifiable information are recorded by Kate's Corner</p>
+    </div>
 
     <div class="form-wrap">
 
