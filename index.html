@@ -227,7 +227,7 @@
     <div class="intro-box">
       <p class="intro-tagline">Need a seat? Check the space. Found one? Share the status.</p>
       <p class="intro-desc">Real-time updates from students help everyone find a better place to study.</p>
-      <p class="intro-rule"><strong>Update rule:</strong> Your selection is recorded instantly. The displayed status updates when <strong>2 of the last 3 reports</strong> agree.</p>
+      <p class="intro-rule"><strong>Update rule:</strong> Your selection is recorded instantly. The displayed status updates when <strong>3 of the last 5 reports</strong> agree.</p>
     </div>
 
     <section class="levels">
@@ -372,19 +372,19 @@
     }
 
     function calculateConsensus(historyArray) {
-      if (!historyArray || historyArray.length < 3) return null;
-      const sample = historyArray.slice(-3);
+      if (!historyArray || historyArray.length < 5) return null;
+      const sample = historyArray.slice(-5);
       const counts = {};
       sample.forEach(item => { if(item.value) counts[item.value] = (counts[item.value] || 0) + 1; });
       let topChoice = null, topCount = 0;
       Object.keys(counts).forEach(key => { if (counts[key] > topCount) { topChoice = key; topCount = counts[key]; } });
-      return (topCount / 3) >= 0.6 ? topChoice : null;
+      return (topCount / 5) >= 0.6 ? topChoice : null;
     }
 
-    // Noise only needs 2 reports to agree (simpler — binary choice)
+    // Noise needs 3 of the last 5 reports to agree
     function calculateNoise(historyArray) {
-      if (!historyArray || historyArray.length < 2) return null;
-      const sample = historyArray.slice(-3);
+      if (!historyArray || historyArray.length < 3) return null;
+      const sample = historyArray.slice(-5);
       const counts = {};
       sample.forEach(item => { if(item.value) counts[item.value] = (counts[item.value] || 0) + 1; });
       let top = null, topCount = 0;
