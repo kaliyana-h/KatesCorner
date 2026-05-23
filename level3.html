@@ -215,6 +215,30 @@
   </main>
 
   <script>
+    // ── Rate-limit helper ──────────────────────────────────────────────────────
+    function checkRateLimit(roomKey) {
+      const WINDOW_MS       = 5 * 60 * 1000;
+      const MAX_SUBMISSIONS = 2;
+      const storageKey      = `kc_rate_${roomKey}`;
+      const now             = Date.now();
+
+      let timestamps = [];
+      try { timestamps = JSON.parse(localStorage.getItem(storageKey) || '[]'); }
+      catch (_) { timestamps = []; }
+
+      timestamps = timestamps.filter(t => now - t < WINDOW_MS);
+
+      if (timestamps.length >= MAX_SUBMISSIONS) {
+        const msLeft   = WINDOW_MS - (now - timestamps[0]);
+        const minsLeft = Math.ceil(msLeft / 60000);
+        return { allowed: false, minsLeft };
+      }
+
+      timestamps.push(now);
+      localStorage.setItem(storageKey, JSON.stringify(timestamps));
+      return { allowed: true };
+    }
+
     // Noise button toggle
     let noiseValue = null;
     const btnQuiet = document.getElementById('btnQuiet');
@@ -266,6 +290,18 @@
     document.getElementById('submitBtn').addEventListener('click', async () => {
       const availValue = document.getElementById('availSelect').value;
       if (!availValue) return;
+
+      // ── Rate-limit check ────────────────────────────────────────────────────
+      const limit = checkRateLimit(ROOM_KEY);
+      if (!limit.allowed) {
+        const feedbackMsg = document.getElementById('feedbackMsg');
+        feedbackMsg.style.color   = "#b45309";
+        feedbackMsg.style.display = 'block';
+        feedbackMsg.textContent   = `⏳ Limit reached – please wait ${limit.minsLeft} min before submitting again.`;
+        setTimeout(() => { feedbackMsg.style.display = 'none'; feedbackMsg.style.color = '#15803d'; }, 5000);
+        return;
+      }
+      // ────────────────────────────────────────────────────────────────────────
 
       const now = new Date().toISOString();
       const submitBtn   = document.getElementById('submitBtn');
