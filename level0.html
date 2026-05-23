@@ -153,6 +153,35 @@
     <div class="disclaimer">Status updates are approximate and submitted by students.</div>
   </main>
 
+  <script>
+    // ── Rate-limit helper ──────────────────────────────────────────────────────
+    // Allows at most 2 submissions per room within a rolling 5-minute window.
+    // State is stored in localStorage so it survives page reloads.
+    function checkRateLimit(roomKey) {
+      const WINDOW_MS       = 5 * 60 * 1000; // 5 minutes
+      const MAX_SUBMISSIONS = 2;
+      const storageKey      = `kc_rate_${roomKey}`;
+      const now             = Date.now();
+
+      let timestamps = [];
+      try { timestamps = JSON.parse(localStorage.getItem(storageKey) || '[]'); }
+      catch (_) { timestamps = []; }
+
+      // Drop entries outside the rolling window
+      timestamps = timestamps.filter(t => now - t < WINDOW_MS);
+
+      if (timestamps.length >= MAX_SUBMISSIONS) {
+        const msLeft   = WINDOW_MS - (now - timestamps[0]);
+        const minsLeft = Math.ceil(msLeft / 60000);
+        return { allowed: false, minsLeft };
+      }
+
+      timestamps.push(now);
+      localStorage.setItem(storageKey, JSON.stringify(timestamps));
+      return { allowed: true };
+    }
+  </script>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -172,7 +201,7 @@
     const floorKey = "level0";
 
     const selectEl = document.getElementById("statusSelect");
-    const msgEl = document.getElementById("statusMsg");
+    const msgEl    = document.getElementById("statusMsg");
 
     selectEl.value = "";
 
@@ -180,13 +209,24 @@
       const val = e.target.value;
       if (!val) return;
 
+      // ── Rate-limit check ──────────────────────────────────────────────────
+      const limit = checkRateLimit(floorKey);
+      if (!limit.allowed) {
+        selectEl.value = "";
+        msgEl.style.color   = "#b45309";
+        msgEl.textContent   = `⏳ Limit reached – please wait ${limit.minsLeft} min before submitting again.`;
+        setTimeout(() => { msgEl.textContent = ""; }, 5000);
+        return;
+      }
+      // ─────────────────────────────────────────────────────────────────────
+
       push(ref(db, `kates-corner/history/${floorKey}`), {
         value: val,
         updatedAt: new Date().toISOString()
       })
       .then(() => {
         msgEl.style.color = "#15803d";
-        msgEl.textContent = "Status updated successfully!";
+        msgEl.textContent = "✓ Status updated successfully!";
         setTimeout(() => { msgEl.textContent = ""; }, 3000);
       })
       .catch((err) => {
