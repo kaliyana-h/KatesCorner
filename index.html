@@ -186,6 +186,22 @@
       .disclaimer { position: static; margin-top: 35px; }
       #kcShareBookmark { position: static; margin-top: 12px; }
     }
+
+.hours-panel {
+  position: absolute;
+  left: 48px;
+  top: 200px;
+  width: 280px;
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.hours-block {
+  margin-top: 10px;
+  font-size: 14px;
+}
   </style>
 </head>
 <body>
@@ -229,6 +245,28 @@
       <p class="intro-desc">Real-time updates from students help everyone find a better place to study.</p>
       <p class="intro-rule"><strong>Update rule:</strong> Your selection is recorded instantly. The displayed status updates when <strong>3 of the last 5 reports</strong> agree.</p>
     </div>
+
+<div class="hours-panel">
+  <h2>📍 Study Space Hours</h2>
+
+  <div id="global-status" class="status-badge unknown">Checking...</div>
+
+  <p id="today-hours"></p>
+  <p id="status-reason" class="note">Checking schedule...</p>
+
+  <div class="hours-block">
+    <h4>Level 0, 3, 4</h4>
+    <p>Weekdays: 7:00 AM – 12:00 AM</p>
+    <p>Weekends: 8:00 AM – 10:00 PM</p>
+  </div>
+
+  <div class="hours-block">
+    <h4>Level 2</h4>
+    <p>24/7 access (semester)</p>
+  </div>
+
+  <p class="note">⚠️ Spaces close 15 minutes before closing time</p>
+</div>
 
     <section class="levels">
 
@@ -343,6 +381,104 @@
       overlay.addEventListener('click', e => { if (e.target===overlay) close(); });
       document.addEventListener('keydown', e => { if (e.key==='Escape') close(); });
     })();
+
+function getOperatingContext() {
+  const now = new Date();
+  const month = now.getMonth();
+
+  const isSemester =
+    (month >= 2 && month <= 5) ||   // Mar–Jun
+    (month >= 7 && month <= 10);    // Aug–Nov
+
+  const today = now.toISOString().slice(5,10);
+
+  const holidays = ["01-01", "12-25", "04-25"]; // sample
+
+  if (holidays.includes(today)) {
+    return "Public Holiday";
+  }
+
+  if (!isSemester) {
+    return "Outside Semester";
+  }
+
+  return "Semester";
+}
+
+function getTodayHours() {
+  const now = new Date();
+  const day = now.getDay();
+  const isWeekend = (day === 0 || day === 6);
+
+  const context = getOperatingContext();
+
+  if (context === "Public Holiday") {
+    return { open: 9, close: 17, label: "9:00 AM – 5:00 PM" };
+  }
+
+  if (context === "Outside Semester") {
+    return isWeekend
+      ? { open: 9, close: 18, label: "9:00 AM – 6:00 PM" }
+      : { open: 8, close: 20, label: "8:00 AM – 8:00 PM" };
+  }
+
+  // Semester
+  return isWeekend
+    ? { open: 8, close: 22, label: "8:00 AM – 10:00 PM" }
+    : { open: 7, close: 24, label: "7:00 AM – 12:00 AM" };
+}
+``
+function checkGlobalStatus() {
+  const now = new Date();
+  const hour = now.getHours();
+
+  const context = getOperatingContext();
+  const hours = getTodayHours();
+
+  let isOpen = false;
+
+  if (hours.open !== null && hours.close !== null) {
+    isOpen = hour >= hours.open && hour < hours.close;
+  }
+
+  const statusEl = document.getElementById("global-status");
+
+  if (isOpen) {
+    statusEl.textContent = "🟢 Currently Open";
+    statusEl.style.background = "#dcfce7";
+    statusEl.style.color = "#15803d";
+  } else {
+    const nextOpen = (context === "Public Holiday") ? "9:00 AM"
+                    : (context === "Outside Semester") ? "8:00 AM"
+                    : "7:00 AM";
+
+    statusEl.textContent = `🔴 Closed (Opens at ${nextOpen})`;
+    statusEl.style.background = "#fef2f2";
+    statusEl.style.color = "#b91c1c";
+  }
+
+  // ✅ Update info text
+  document.getElementById("today-hours").textContent =
+    "⏰ Today: " + hours.label;
+
+  document.getElementById("status-reason").textContent =
+    "📅 " + context;
+
+  // ✅ Disable updates when closed
+  document.querySelectorAll(".update-btn").forEach(btn => {
+    if (!isOpen) {
+      btn.style.pointerEvents = "none";
+      btn.style.opacity = 0.5;
+    } else {
+      btn.style.pointerEvents = "auto";
+      btn.style.opacity = 1;
+    }
+  });
+}
+
+checkGlobalStatus();
+setInterval(checkGlobalStatus, 60000);
+
   </script>
 
   <script type="module">
