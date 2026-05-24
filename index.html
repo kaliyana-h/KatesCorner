@@ -187,20 +187,22 @@
       #kcShareBookmark { position: static; margin-top: 12px; }
     }
 
-.hours-panel {
-  position: absolute;
-  left: 48px;
-  top: 200px;
-  width: 280px;
-  background: white;
-  padding: 20px;
-  border-radius: 14px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+.level-hours {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 10px;
+  background: #f1f5f9;
 }
 
-.hours-block {
-  margin-top: 10px;
-  font-size: 14px;
+.level-hours.open {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.level-hours.closed {
+  background: #fef2f2;
+  color: #b91c1c;
 }
   </style>
 </head>
@@ -246,37 +248,16 @@
       <p class="intro-rule"><strong>Update rule:</strong> Your selection is recorded instantly. The displayed status updates when <strong>3 of the last 5 reports</strong> agree.</p>
     </div>
 
-<div class="hours-panel">
-  <h2>📍 Study Space Hours</h2>
-
-  <div id="global-status" class="status-badge unknown">Checking...</div>
-
-  <p id="today-hours"></p>
-  <p id="status-reason" class="note">Checking schedule...</p>
-
-  <div class="hours-block">
-    <h4>Level 0, 3, 4</h4>
-    <p>Weekdays: 7:00 AM – 12:00 AM</p>
-    <p>Weekends: 8:00 AM – 10:00 PM</p>
-  </div>
-
-  <div class="hours-block">
-    <h4>Level 2</h4>
-    <p>24/7 access (semester)</p>
-  </div>
-
-  <p class="note">⚠️ Spaces close 15 minutes before closing time</p>
-</div>
-
     <section class="levels">
 
       <!-- Level 0 — no noise indicator -->
       <div class="card" id="card-level0" data-value="">
         <div class="card-info">
           <span class="card-title">Level 0 – Collaborative Study Space</span>
-          <div class="card-actions">
-            <a href="level0.html" class="update-btn">Update Status</a>
-          </div>
+         <div class="card-actions">
+  <a href="level0.html" class="update-btn">Update Status</a>
+  <div class="level-hours" id="hours-level0"></div>
+</div>
         </div>
         <span class="status-badge unknown" id="badge-level0">Unknown</span>
       </div>
@@ -287,8 +268,9 @@
         <div class="card-info">
           <span class="card-title">Level 2 – Collaborative Study Space</span>
           <div class="card-actions">
-            <a href="level2.html" class="update-btn">Update Status</a>
-          </div>
+  <a href="level2.html" class="update-btn">Update Status</a>
+  <div class="level-hours" id="hours-level2"></div>
+</div>
         </div>
         <span class="status-badge unknown" id="badge-level2">Unknown</span>
       </div>
@@ -298,10 +280,11 @@
       <div class="card" id="card-level3" data-value="">
         <div class="card-info">
           <span class="card-title">Level 3 – Quiet Study Space</span>
-          <div class="card-actions">
-            <a href="level3.html" class="update-btn">Update Status</a>
-            <span class="noise-indicator" id="noise-level3">🔇 –</span>
-          </div>
+         <div class="card-actions">
+  <a href="level3.html" class="update-btn">Update Status</a>
+  <span class="noise-indicator" id="noise-level3">🔇 –</span>
+  <div class="level-hours" id="hours-level3"></div>
+</div>
         </div>
         <span class="status-badge unknown" id="badge-level3">Unknown</span>
       </div>
@@ -312,9 +295,10 @@
         <div class="card-info">
           <span class="card-title">Level 4 – Silent Study Space</span>
           <div class="card-actions">
-            <a href="level4.html" class="update-btn">Update Status</a>
-            <span class="noise-indicator" id="noise-level4">🔇 –</span>
-          </div>
+  <a href="level4.html" class="update-btn">Update Status</a>
+  <span class="noise-indicator" id="noise-level4">🔇 –</span>
+  <div class="level-hours" id="hours-level4"></div>
+</div>
         </div>
         <span class="status-badge unknown" id="badge-level4">Unknown</span>
       </div>
@@ -381,104 +365,6 @@
       overlay.addEventListener('click', e => { if (e.target===overlay) close(); });
       document.addEventListener('keydown', e => { if (e.key==='Escape') close(); });
     })();
-
-function getOperatingContext() {
-  const now = new Date();
-  const month = now.getMonth();
-
-  const isSemester =
-    (month >= 2 && month <= 5) ||   // Mar–Jun
-    (month >= 7 && month <= 10);    // Aug–Nov
-
-  const today = now.toISOString().slice(5,10);
-
-  const holidays = ["01-01", "12-25", "04-25"]; // sample
-
-  if (holidays.includes(today)) {
-    return "Public Holiday";
-  }
-
-  if (!isSemester) {
-    return "Outside Semester";
-  }
-
-  return "Semester";
-}
-
-function getTodayHours() {
-  const now = new Date();
-  const day = now.getDay();
-  const isWeekend = (day === 0 || day === 6);
-
-  const context = getOperatingContext();
-
-  if (context === "Public Holiday") {
-    return { open: 9, close: 17, label: "9:00 AM – 5:00 PM" };
-  }
-
-  if (context === "Outside Semester") {
-    return isWeekend
-      ? { open: 9, close: 18, label: "9:00 AM – 6:00 PM" }
-      : { open: 8, close: 20, label: "8:00 AM – 8:00 PM" };
-  }
-
-  // Semester
-  return isWeekend
-    ? { open: 8, close: 22, label: "8:00 AM – 10:00 PM" }
-    : { open: 7, close: 24, label: "7:00 AM – 12:00 AM" };
-}
-``
-function checkGlobalStatus() {
-  const now = new Date();
-  const hour = now.getHours();
-
-  const context = getOperatingContext();
-  const hours = getTodayHours();
-
-  let isOpen = false;
-
-  if (hours.open !== null && hours.close !== null) {
-    isOpen = hour >= hours.open && hour < hours.close;
-  }
-
-  const statusEl = document.getElementById("global-status");
-
-  if (isOpen) {
-    statusEl.textContent = "🟢 Currently Open";
-    statusEl.style.background = "#dcfce7";
-    statusEl.style.color = "#15803d";
-  } else {
-    const nextOpen = (context === "Public Holiday") ? "9:00 AM"
-                    : (context === "Outside Semester") ? "8:00 AM"
-                    : "7:00 AM";
-
-    statusEl.textContent = `🔴 Closed (Opens at ${nextOpen})`;
-    statusEl.style.background = "#fef2f2";
-    statusEl.style.color = "#b91c1c";
-  }
-
-  // ✅ Update info text
-  document.getElementById("today-hours").textContent =
-    "⏰ Today: " + hours.label;
-
-  document.getElementById("status-reason").textContent =
-    "📅 " + context;
-
-  // ✅ Disable updates when closed
-  document.querySelectorAll(".update-btn").forEach(btn => {
-    if (!isOpen) {
-      btn.style.pointerEvents = "none";
-      btn.style.opacity = 0.5;
-    } else {
-      btn.style.pointerEvents = "auto";
-      btn.style.opacity = 1;
-    }
-  });
-}
-
-checkGlobalStatus();
-setInterval(checkGlobalStatus, 60000);
-
   </script>
 
   <script type="module">
@@ -574,6 +460,92 @@ setInterval(checkGlobalStatus, 60000);
         applyNoiseToUI(key, calculateNoise(noiseList));
       });
     });
+
+// ✅ ✅ ADD EVERYTHING BELOW THIS LINE ✅ ✅
+
+
+// ---- Public holiday detection ----
+const PUBLIC_HOLIDAYS = [
+  "01-01","02-06","04-25","06-01","07-10","10-26","12-25"
+];
+
+function isPublicHoliday() {
+  const today = new Date().toISOString().slice(5,10);
+  return PUBLIC_HOLIDAYS.includes(today);
+}
+
+
+// ---- Level hours ----
+function getLevelHours(level) {
+  const now = new Date();
+  const day = now.getDay();
+  const isWeekend = (day === 0 || day === 6);
+
+  // Level 2 always open
+  if (level === "level2") {
+    return { open: 0, close: 24, label: "24/7" };
+  }
+
+  // Public holiday
+  if (isPublicHoliday()) {
+    return { open: 9, close: 17, label: "9:00 AM – 5:00 PM" };
+  }
+
+  // Weekend
+  if (isWeekend) {
+    return { open: 8, close: 22, label: "8:00 AM – 10:00 PM" };
+  }
+
+  // Weekdays
+  return { open: 7, close: 24, label: "7:00 AM – 12:00 AM" };
+}
+
+
+// ---- Format time ----
+function formatHour(hour) {
+  const suffix = hour >= 12 ? "PM" : "AM";
+  const display = hour % 12 || 12;
+  return display + ":00 " + suffix;
+}
+
+
+// ---- Update UI inside cards ----
+function updateLevelHoursDisplay() {
+
+  LEVELS.forEach(level => {
+
+    const el = document.getElementById(`hours-${level}`);
+    if (!el) return;
+
+    const now = new Date();
+    const current = now.getHours() + now.getMinutes()/60;
+    const hours = getLevelHours(level);
+
+    // Level 2
+    if (level === "level2") {
+      el.textContent = "🟢 Open 24/7";
+      el.className = "level-hours open";
+      return;
+    }
+
+    const isOpen = current >= hours.open && current < hours.close;
+
+    if (isOpen) {
+      el.textContent = `🟢 Open • ${hours.label}`;
+      el.className = "level-hours open";
+    } else {
+      el.textContent = `🔴 Closed • Opens at ${formatHour(hours.open)}`;
+      el.className = "level-hours closed";
+    }
+
+  });
+}
+
+
+// ---- Run it ----
+updateLevelHoursDisplay();
+setInterval(updateLevelHoursDisplay, 60000);
+
   </script>
 </body>
 </html>
