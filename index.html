@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Kate's Corner</title>
   <style>
+
+.seat-count {
+  font-size: 13px;
+  font-weight: 600;
+  margin-left: 8px;
+  color: #475569;
+}
+
     #liveDateTime {
       position: fixed; top: 16px; right: 20px;
       font-size: 14px; font-weight: 600; color: #24384d;
@@ -253,7 +261,10 @@
       <!-- Level 0 — no noise indicator -->
       <div class="card" id="card-level0" data-value="">
         <div class="card-info">
-          <span class="card-title">Level 0 – Collaborative Study Space</span>
+         <span class="card-title">
+  Level 0 – Collaborative Study Space
+  <span class="seat-count" id="seats-level0"></span>
+</span>
          <div class="card-actions">
   <a href="level0.html" class="update-btn">Update Status</a>
   <div class="level-hours" id="hours-level0"></div>
@@ -266,7 +277,10 @@
       <!-- Level 2 — no noise indicator -->
       <div class="card" id="card-level2" data-value="">
         <div class="card-info">
-          <span class="card-title">Level 2 – Collaborative Study Space</span>
+        <span class="card-title">
+  Level 2 – Collaborative Study Space
+  <span class="seat-count" id="seats-level2"></span>
+</span>
           <div class="card-actions">
   <a href="level2.html" class="update-btn">Update Status</a>
   <div class="level-hours" id="hours-level2"></div>
@@ -279,7 +293,10 @@
       <!-- Level 3 — with noise indicator -->
       <div class="card" id="card-level3" data-value="">
         <div class="card-info">
-          <span class="card-title">Level 3 – Quiet Study Space</span>
+         <span class="card-title">
+  Level 3 – Quiet Study Space
+  <span class="seat-count" id="seats-level3"></span>
+</span>
          <div class="card-actions">
   <a href="level3.html" class="update-btn">Update Status</a>
   <span class="noise-indicator" id="noise-level3">🔇 –</span>
@@ -293,7 +310,10 @@
       <!-- Level 4 — with noise indicator -->
       <div class="card" id="card-level4" data-value="">
         <div class="card-info">
-          <span class="card-title">Level 4 – Silent Study Space</span>
+      <span class="card-title">
+  Level 4 – Silent Study Space
+  <span class="seat-count" id="seats-level4"></span>
+</span>
           <div class="card-actions">
   <a href="level4.html" class="update-btn">Update Status</a>
   <span class="noise-indicator" id="noise-level4">🔇 –</span>
@@ -462,6 +482,32 @@
     });
 
 // ✅ ✅ ADD EVERYTHING BELOW THIS LINE ✅ ✅
+
+// ---- Seat counts ----
+const SEAT_COUNTS = {
+  level0: "—",   // unknown / not specified
+  level2: 150,
+  level3: 150,
+  level4: 150
+};
+
+function updateSeatCounts() {
+  Object.keys(SEAT_COUNTS).forEach(level => {
+    const el = document.getElementById(`seats-${level}`);
+    if (!el) return;
+
+    const value = SEAT_COUNTS[level];
+
+    if (value === "—") {
+      el.textContent = "(Seats unknown)";
+    } else {
+      el.textContent = `(${value} seats)`;
+    }
+  });
+}
+
+// Run once
+updateSeatCounts();
 
 
 // ---- Public holiday detection ----
