@@ -231,7 +231,7 @@
         trackContribution();
         msgEl.style.color = "#15803d";
         msgEl.textContent = "✓ Status updated successfully!";
-        setTimeout(() => { msgEl.textContent = ""; }, 3000);
+        setTimeout(() => { window.location.href = 'index.html'; }, 1500);
       })
       .catch((err) => {
         msgEl.style.color = "#b91c1c";
