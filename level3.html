@@ -17,6 +17,11 @@
     .logo { width: 56px; height: 56px; border-radius: 6px; background: var(--navy); color: white; display: grid; place-items: center; font-weight: 700; letter-spacing: 0.5px; box-shadow: 0 8px 15px rgba(0,59,115,0.22); text-decoration: none; }
     .title { margin: 0; color: var(--navy); font-size: 28px; line-height: 1; font-weight: 800; }
     .subtitle { margin: 8px 0 0; color: var(--muted); font-size: 15px; }
+    .big-back-btn { display: block; text-align: center; text-decoration: none; font-family: Arial, Helvetica, sans-serif; font-size: 18px; font-weight: bold; color: #ffffff; background-color: var(--navy); padding: 15px 30px; border-radius: 12px; margin: 20px auto; max-width: 500px; box-shadow: 0 4px 12px rgba(0,59,115,0.2); transition: background-color 0.2s; }
+    .big-back-btn:hover { background-color: #00274d; }
+    .intro-block { width: min(620px, calc(100vw - 48px)); margin: 28px auto 0; background: #eef4fb; border-left: 4px solid var(--navy); border-radius: 10px; padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; }
+    .intro-rule { font-size: 13.5px; color: #2c3e50; line-height: 1.6; margin: 0; }
+    .intro-rule strong { color: var(--navy); }
     .form-wrap { width: min(600px, calc(100vw - 32px)); margin: 50px auto 0; display: flex; flex-direction: column; gap: 20px; }
     .card { min-height: 90px; border-radius: 34px; background: var(--card-bg); border: 1px solid var(--border); box-shadow: 0 18px 35px rgba(15,23,42,0.08); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 20px 28px 20px 44px; position: relative; overflow: hidden; transition: 0.25s ease; }
     .card::before { content: ""; position: absolute; left: 0; top: 0; width: 14px; height: 100%; background: var(--neutral); transition: background 0.25s ease; }
@@ -46,6 +51,9 @@
   </style>
 </head>
 <body>
+
+  <a href="index.html" class="big-back-btn">← Back to Statuses</a>
+
   <main class="page">
     <header class="header">
       <a class="logo" href="index.html" aria-label="Back to all levels">KC</a>
@@ -54,6 +62,10 @@
         <p class="subtitle">A quick peek at how busy Kate Edger's study rooms are</p>
       </div>
     </header>
+
+    <div class="intro-block">
+      <p class="intro-rule"><strong>Update rule:</strong> Your selection is recorded instantly. The displayed status updates when <strong>3 of the last 5 reports</strong> agree.<br>Your privacy is protected. No personally identifiable information are recorded by Kate's Corner</p>
+    </div>
 
     <div class="form-wrap">
       <div class="card" id="statusCard">
@@ -67,7 +79,6 @@
         </select>
       </div>
 
-      <!-- Noise level -->
       <div class="noise-card">
         <div class="noise-label">How's the noise level? <span>optional</span></div>
         <div class="noise-options">
@@ -75,66 +86,69 @@
           <button class="noise-btn" id="btnNoisy" type="button">🔊 Noisy</button>
         </div>
       </div>
+
       <button class="submit-btn" id="submitBtn" disabled>Submit</button>
-      <div class="feedback-msg" id="feedbackMsg">✓ Thanks for helping your fellow students!</div>
+      <div class="feedback-msg" id="feedbackMsg">✓ Thanks! Your update has been recorded.</div>
       <a class="back-link" href="index.html">← Back to all levels</a>
       <p class="disclaimer">Status updates are approximate.</p>
     </div>
   </main>
 
   <script>
-    var noiseValue = null;
-
-    // Noise toggles (only present on level 3 and 4)
-    var btnQuiet = document.getElementById('btnQuiet');
-    var btnNoisy = document.getElementById('btnNoisy');
-    if (btnQuiet) {
-      btnQuiet.addEventListener('click', function() {
-        noiseValue = noiseValue === 'quiet' ? null : 'quiet';
-        btnQuiet.className = 'noise-btn' + (noiseValue === 'quiet' ? ' active-quiet' : '');
-        btnNoisy.className = 'noise-btn';
-      });
-      btnNoisy.addEventListener('click', function() {
-        noiseValue = noiseValue === 'noisy' ? null : 'noisy';
-        btnNoisy.className = 'noise-btn' + (noiseValue === 'noisy' ? ' active-noisy' : '');
-        btnQuiet.className = 'noise-btn';
-      });
+    function checkRateLimit(roomKey) {
+      const WINDOW_MS = 5 * 60 * 1000, MAX_SUBMISSIONS = 2;
+      const storageKey = 'kc_rate_' + roomKey, now = Date.now();
+      let timestamps = [];
+      try { timestamps = JSON.parse(localStorage.getItem(storageKey) || '[]'); } catch (_) { timestamps = []; }
+      timestamps = timestamps.filter(t => now - t < WINDOW_MS);
+      if (timestamps.length >= MAX_SUBMISSIONS) {
+        const minsLeft = Math.ceil((WINDOW_MS - (now - timestamps[0])) / 60000);
+        return { allowed: false, minsLeft };
+      }
+      timestamps.push(now);
+      localStorage.setItem(storageKey, JSON.stringify(timestamps));
+      return { allowed: true };
     }
 
-    // Availability dropdown colour
-    var availSelect = document.getElementById('availSelect');
-    var statusCard  = document.getElementById('statusCard');
-    var submitBtn   = document.getElementById('submitBtn');
-    var colourMap   = { 'choice-a':'sel-a', 'choice-b':'sel-b', 'choice-c':'sel-c', 'choice-d':'sel-d' };
-
-    availSelect.addEventListener('change', function() {
-      Object.values(colourMap).forEach(function(c){ availSelect.classList.remove(c); statusCard.classList.remove(c); });
-      var cls = colourMap[availSelect.value];
-      if (cls) { availSelect.classList.add(cls); statusCard.classList.add(cls); }
-      submitBtn.disabled = !availSelect.value;
-    });
-
-    // ── Contribution streak + counter ──
     function trackContribution() {
-      var today     = new Date().toDateString();
-      var lastDate  = localStorage.getItem('kc_last_submit_date');
-      var streak    = parseInt(localStorage.getItem('kc_streak') || '0');
-      var total     = parseInt(localStorage.getItem('kc_total')  || '0');
-      var yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
-
-      var newStreak;
-      if (lastDate === today) {
-        newStreak = streak;                            // already submitted today
-      } else if (lastDate === yesterday.toDateString()) {
-        newStreak = streak + 1;                        // consecutive day
-      } else {
-        newStreak = 1;                                 // gap — reset
-      }
-
+      const today     = new Date().toDateString();
+      const lastDate  = localStorage.getItem('kc_last_submit_date');
+      const streak    = parseInt(localStorage.getItem('kc_streak') || '0');
+      const total     = parseInt(localStorage.getItem('kc_total')  || '0');
+      const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+      let newStreak;
+      if (lastDate === today)                          { newStreak = streak; }
+      else if (lastDate === yesterday.toDateString())  { newStreak = streak + 1; }
+      else                                             { newStreak = 1; }
       localStorage.setItem('kc_last_submit_date', today);
       localStorage.setItem('kc_streak', newStreak);
       localStorage.setItem('kc_total',  total + 1);
     }
+
+    let noiseValue = null;
+    const btnQuiet = document.getElementById('btnQuiet');
+    const btnNoisy = document.getElementById('btnNoisy');
+    btnQuiet.addEventListener('click', () => {
+      noiseValue = noiseValue === 'quiet' ? null : 'quiet';
+      btnQuiet.className = 'noise-btn' + (noiseValue === 'quiet' ? ' active-quiet' : '');
+      btnNoisy.className = 'noise-btn';
+    });
+    btnNoisy.addEventListener('click', () => {
+      noiseValue = noiseValue === 'noisy' ? null : 'noisy';
+      btnNoisy.className = 'noise-btn' + (noiseValue === 'noisy' ? ' active-noisy' : '');
+      btnQuiet.className = 'noise-btn';
+    });
+
+    const availSelect = document.getElementById('availSelect');
+    const statusCard  = document.getElementById('statusCard');
+    const submitBtn   = document.getElementById('submitBtn');
+    const colourMap   = { 'choice-a':'sel-a', 'choice-b':'sel-b', 'choice-c':'sel-c', 'choice-d':'sel-d' };
+    availSelect.addEventListener('change', () => {
+      Object.values(colourMap).forEach(c => { availSelect.classList.remove(c); statusCard.classList.remove(c); });
+      const cls = colourMap[availSelect.value];
+      if (cls) { availSelect.classList.add(cls); statusCard.classList.add(cls); }
+      submitBtn.disabled = !availSelect.value;
+    });
   </script>
 
   <script type="module">
@@ -159,27 +173,31 @@
       const availValue = document.getElementById('availSelect').value;
       if (!availValue) return;
 
+      const limit = checkRateLimit(ROOM_KEY);
+      if (!limit.allowed) {
+        const feedbackMsg = document.getElementById('feedbackMsg');
+        feedbackMsg.style.color = "#b45309";
+        feedbackMsg.style.display = 'block';
+        feedbackMsg.textContent = '⏳ Limit reached – please wait ' + limit.minsLeft + ' min before submitting again.';
+        setTimeout(() => { feedbackMsg.style.display = 'none'; feedbackMsg.style.color = '#15803d'; }, 5000);
+        return;
+      }
+
       const now = new Date().toISOString();
       const submitBtn   = document.getElementById('submitBtn');
       const feedbackMsg = document.getElementById('feedbackMsg');
-
       submitBtn.disabled = true;
       submitBtn.textContent = 'Submitting…';
 
       try {
-        await push(ref(db, `kates-corner/history/${ROOM_KEY}`), { value: availValue, updatedAt: now });
-
+        await push(ref(db, 'kates-corner/history/' + ROOM_KEY), { value: availValue, updatedAt: now });
         if (window.noiseValue) {
-          await push(ref(db, `kates-corner/noise/${ROOM_KEY}`), { value: window.noiseValue, updatedAt: now });
+          await push(ref(db, 'kates-corner/noise/' + ROOM_KEY), { value: window.noiseValue, updatedAt: now });
         }
-
-        // Record contribution in localStorage
         trackContribution();
-
         feedbackMsg.style.display = 'block';
         submitBtn.textContent = 'Submitted ✓';
         setTimeout(() => { window.location.href = 'index.html'; }, 1500);
-
       } catch (err) {
         console.error(err);
         submitBtn.disabled = false;
@@ -187,6 +205,8 @@
         alert('Something went wrong — please try again.');
       }
     });
+
+    Object.defineProperty(window, 'noiseValue', { get: () => noiseValue, configurable: true });
   </script>
 </body>
 </html>
