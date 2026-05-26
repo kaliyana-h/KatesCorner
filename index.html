@@ -6,6 +6,42 @@
   <title>Kate's Corner</title>
   <style>
 
+#rewardBar {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: #003b73;
+  color: white;
+  text-align: center;
+  padding: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 200;
+  transition: all 0.2s ease;
+}
+
+/* ✅ hover effect */
+#rewardBar:hover {
+  transform: scale(1.02);
+  background: #00509e;
+}
+
+/* ✅ click effect */
+#rewardBar:active {
+  transform: scale(0.97);
+}
+
+/* ✅ when reward is ready (pulsing green) */
+#rewardBar.ready {
+  background: linear-gradient(90deg, #2ecc71, #27ae60);
+  animation: pulse 1.2s infinite;
+}
+
+@keyframes pulse {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
 .seat-count {
   font-size: 13px;
   font-weight: 600;
@@ -215,6 +251,60 @@
     }
     .level-hours.open  { background: #dcfce7; color: #15803d; }
     .level-hours.closed { background: #fef2f2; color: #b91c1c; }
+
+/* ✅ Bottom reward bar */
+#rewardBar {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: #003b73;
+  color: white;
+  text-align: center;
+  padding: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 200;
+}
+
+/* ✅ Popup background */
+#rewardPopup {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 300;
+}
+
+/* ✅ Popup box */
+#rewardBox {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+/* ✅ Buttons */
+#rewardBox button {
+  margin: 10px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
+#rewardBar.shake {
+  animation: shake 0.4s;
+}
   </style>
 </head>
 <body>
@@ -334,9 +424,27 @@
   </main>
 
   <div class="sidebar-container">
-    <div class="sidebar-ad"><span class="ad-tag">Sponsored</span><h3>Campus Café ☕</h3><p>Student coffee specials and quiet seating throughout the week.</p><a href="#" class="ad-btn">View Offer</a></div>
-    <div class="sidebar-ad"><span class="ad-tag">Sponsored</span><h3>University Bookstore 📚</h3><p>Discounts on stationery, notebooks, and selected course materials.</p><a href="#" class="ad-btn">Browse Deals</a></div>
-    <div class="sidebar-ad"><span class="ad-tag">Sponsored</span><h3>Campus Eats 🍔</h3><p>Nearby restaurants with student deals and late-night meals.</p><a href="#" class="ad-btn">Explore Food</a></div>
+    <div class="sidebar-ad"><span class="ad-tag">Sponsored</span><h3>Campus Café ☕</h3><p>Student coffee specials and quiet seating throughout the week.</p>
+<a href="https://www.instagram.com/receptionist_official/"
+   class="ad-btn"
+   target="_blank">
+   View Offer
+</a>
+</div>
+    <div class="sidebar-ad"><span class="ad-tag">Sponsored</span><h3>University of Auckland 🎓</h3><p>Discounts on stationery, notebooks, and selected course materials.</p>
+<a href="https://www.auckland.ac.nz"
+   class="ad-btn"
+   target="_blank">
+   Open Uni Page
+</a>
+</div>
+    <div class="sidebar-ad"><span class="ad-tag">Sponsored</span><h3>Local Eats 🍔</h3><p>Nearby restaurants with student deals and late-night meals.</p>
+<a href="https://www.burgerfuel.com/"
+   class="ad-btn"
+   target="_blank">
+   Explore Food
+</a>
+</div>
   </div>
 
   <script>
@@ -442,6 +550,72 @@
     }
     updateLevelHoursDisplay();
     setInterval(updateLevelHoursDisplay, 60000);
+
+// ✅ Reward options
+const rewards = [
+  "☕ 10% off Campus Café",
+  "📚 15% off Bookstore",
+  "🍔 Free fries with a meal",
+  "🎧 Study playlist access"
+];
+
+// ✅ Check if user earned a reward
+function checkReward() {
+  let updates = parseInt(localStorage.getItem("kc_total") || "0");
+
+  if (updates > 0 && updates % 3 === 0) {
+    // ✅ user gets reward
+    let reward = rewards[Math.floor(Math.random() * rewards.length)];
+
+    document.getElementById("rewardText").textContent = reward;
+    document.getElementById("rewardPopup").style.display = "flex";
+
+  } else {
+    let needed = 3 - (updates % 3);
+
+    const bar = document.getElementById("rewardBar");
+
+    // ✅ shake effect
+    bar.classList.add("shake");
+    setTimeout(() => bar.classList.remove("shake"), 400);
+
+    alert("Almost there! Submit " + needed + " more update(s)");
+  }
+}
+
+// ✅ Close popup
+function closeReward() {
+  document.getElementById("rewardPopup").style.display = "none";
+}
+
+// ✅ Claim reward
+function claimReward() {
+  alert("✅ Show this to claim your reward!");
+  closeReward();
+}
+
+function updateRewardBarText() {
+  let updates = parseInt(localStorage.getItem("kc_total") || "0");
+  let needed = 3 - (updates % 3);
+
+  const bar = document.getElementById("rewardBar");
+
+  if (updates > 0 && updates % 3 === 0) {
+    bar.textContent = "🎁 Reward ready! Click to open";
+    bar.classList.add("ready");
+  } else {
+    bar.textContent = `🎯 ${needed} more update(s) to unlock reward`;
+    bar.classList.remove("ready");
+  }
+}
+
+// run it
+updateRewardBarText();
+
+document.getElementById("rewardBar").addEventListener("click", () => {
+  window.open("https://www.auckland.ac.nz", "_blank");
+});
+
   </script>
 
   <script type="module">
@@ -529,5 +703,27 @@
       });
     });
   </script>
+
+<!-- ✅ REWARD BAR -->
+<div id="rewardBar">
+  🎁 Click to check your Coupons
+</div>
+
+<script>
+  document.getElementById("rewardBar").addEventListener("click", function() {
+    window.open("https://new.grabone.co.nz/auckland", "_blank");
+  });
+</script>
+
+<!-- ✅ REWARD POPUP -->
+<div id="rewardPopup">
+  <div id="rewardBox">
+    <h3>🎉 Reward Unlocked!</h3>
+    <p id="rewardText"></p>
+
+    <button onclick="claimReward()">Claim</button>
+    <button onclick="closeReward()">Close</button>
+  </div>
+</div>
 </body>
 </html>
