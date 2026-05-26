@@ -7,28 +7,25 @@
   <style>
 
 #rewardBar {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  background: #003b73;
-  color: white;
-  text-align: center;
-  padding: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  z-index: 200;
-  transition: all 0.2s ease;
-}
+  display: inline-block; 
+  margin-top: 60px;
 
+  background: #0b3f73;
+  color: white;
+
+  padding: 10px 16px;       
+  border-radius: 999px;     
+
+  font-size: 15px;
+  font-weight: 600;
+
+  user-select: none;
+  cursor: pointer;
+}
 /* ✅ hover effect */
 #rewardBar:hover {
   transform: scale(1.02);
-  background: #00509e;
-}
-
-/* ✅ click effect */
-#rewardBar:active {
-  transform: scale(0.97);
+  background: #0d4f8f;
 }
 
 /* ✅ when reward is ready (pulsing green) */
@@ -73,7 +70,7 @@
     }
     * { box-sizing: border-box; }
     body { margin: 0; min-height: 100vh; font-family: Arial, Helvetica, sans-serif; background: var(--page-bg); color: var(--text); }
-    .page { min-height: 100vh; padding: 41px 44px 120px; position: relative; }
+    .page { min-height: 100vh; padding: 41px 44px 80px; position: relative; }
     .header { display: flex; align-items: center; gap: 20px; }
     .logo {
       width: 56px; height: 56px; border-radius: 6px;
@@ -223,7 +220,7 @@
     #kcBmOverlay .kc-bm-tip ol { margin: 8px 0 0 18px; padding: 0; }
     #kcBmOverlay .kc-bm-tip li { margin: 6px 0; }
 
-    .sidebar-container { position: fixed; right: 24px; top: 60px; display: flex; flex-direction: column; gap: 14px; z-index: 2; }
+    .sidebar-container { position: fixed; right: 24px; top: 120px; display: flex; flex-direction: column; gap: 14px; z-index: 2; }
     .sidebar-ad { width: 220px; background: rgba(255,255,255,0.9); border: 1px solid rgba(226,232,240,0.9); border-radius: 16px; padding: 16px; box-shadow: 0 6px 18px rgba(15,23,42,0.05); transition: 0.2s ease; }
     .sidebar-ad:hover { transform: translateY(-2px); }
     .ad-tag { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #64748b; margin-bottom: 10px; display: inline-block; }
@@ -251,20 +248,6 @@
     }
     .level-hours.open  { background: #dcfce7; color: #15803d; }
     .level-hours.closed { background: #fef2f2; color: #b91c1c; }
-
-/* ✅ Bottom reward bar */
-#rewardBar {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  background: #003b73;
-  color: white;
-  text-align: center;
-  padding: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  z-index: 200;
-}
 
 /* ✅ Popup background */
 #rewardPopup {
@@ -335,6 +318,11 @@
         <span>Share / Bookmark this page</span>
       </button>
     </div>
+
+<!-- ✅ REWARD BAR -->
+<div id="rewardBar">
+  🎁 Click to check your Coupons
+</div>
 
     <div id="kcBmOverlay" role="dialog" aria-modal="true">
       <div class="kc-bm-modal">
@@ -544,71 +532,6 @@
     updateLevelHoursDisplay();
     setInterval(updateLevelHoursDisplay, 60000);
 
-// ✅ Reward options
-const rewards = [
-  "☕ 10% off Campus Café",
-  "📚 15% off Bookstore",
-  "🍔 Free fries with a meal",
-  "🎧 Study playlist access"
-];
-
-// ✅ Check if user earned a reward
-function checkReward() {
-  let updates = parseInt(localStorage.getItem("kc_total") || "0");
-
-  if (updates > 0 && updates % 3 === 0) {
-    // ✅ user gets reward
-    let reward = rewards[Math.floor(Math.random() * rewards.length)];
-
-    document.getElementById("rewardText").textContent = reward;
-    document.getElementById("rewardPopup").style.display = "flex";
-
-  } else {
-    let needed = 3 - (updates % 3);
-
-    const bar = document.getElementById("rewardBar");
-
-    // ✅ shake effect
-    bar.classList.add("shake");
-    setTimeout(() => bar.classList.remove("shake"), 400);
-
-    alert("Almost there! Submit " + needed + " more update(s)");
-  }
-}
-
-// ✅ Close popup
-function closeReward() {
-  document.getElementById("rewardPopup").style.display = "none";
-}
-
-// ✅ Claim reward
-function claimReward() {
-  alert("✅ Show this to claim your reward!");
-  closeReward();
-}
-
-function updateRewardBarText() {
-  let updates = parseInt(localStorage.getItem("kc_total") || "0");
-  let needed = 3 - (updates % 3);
-
-  const bar = document.getElementById("rewardBar");
-
-  if (updates > 0 && updates % 3 === 0) {
-    bar.textContent = "🎁 Reward ready! Click to open";
-    bar.classList.add("ready");
-  } else {
-    bar.textContent = `🎯 ${needed} more update(s) to unlock reward`;
-    bar.classList.remove("ready");
-  }
-}
-
-// run it
-updateRewardBarText();
-
-document.getElementById("rewardBar").addEventListener("click", () => {
-  window.open("https://www.auckland.ac.nz", "_blank");
-});
-
   </script>
 
   <script type="module">
@@ -696,11 +619,6 @@ document.getElementById("rewardBar").addEventListener("click", () => {
       });
     });
   </script>
-
-<!-- ✅ REWARD BAR -->
-<div id="rewardBar">
-  🎁 Click to check your Coupons
-</div>
 
 <script>
   document.getElementById("rewardBar").addEventListener("click", function() {
